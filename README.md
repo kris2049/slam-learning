@@ -22,20 +22,28 @@
 ## 使用方式
 
 ```bash
-# 进入某一级
+# 每个级别按顺序学习:
+#   study/  →  学习教材 (先读这个!)
+#   exercises/ → 编程练习 (边学边练)
+#   experiments/ → 实验验证 (跑起来看结果)
+#   tests/ → 综合测试 (通过=掌握)
+
 cd level-01-beginner
 
-# 阅读学习目标
-cat README.md
+# 1️⃣ 先读教材
+cat study/01-programming.md
+cat study/02-mathematics.md
+cat study/03-projective-geometry.md
+cat study/04-camera-and-image.md
 
-# 完成练习
-cd exercises/ && python3 exercise_01_basics.py
+# 2️⃣ 做练习
+/usr/bin/python3 exercises/exercise_01_linear_algebra.py
 
-# 运行实验
-cd experiments/ && python3 experiment_01_camera.py
+# 3️⃣ 跑实验
+/usr/bin/python3 experiments/experiment_01_camera_model.py
 
-# 通过测试
-cd tests/ && python3 test_01.py
+# 4️⃣ 通过测试
+/usr/bin/python3 tests/test_01_basics.py
 ```
 
 ## 规则
