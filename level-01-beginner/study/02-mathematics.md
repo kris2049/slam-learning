@@ -28,7 +28,7 @@ $$||a|| = \sqrt{a_1^2 + a_2^2 + a_3^2} = \sqrt{9 + 0 + 0} = 3$$
 
 $$a \cdot b = a^\top b = a_1b_1 + a_2b_2 + a_3b_3$$
 
-几何意义：$a \cdot b = \|a\| \cdot \|b\| \cdot \cos\theta$
+几何意义：$a \cdot b = \lVert a \rVert \cdot \lVert b \rVert \cdot \cos\theta$
 
 - 若 $a \cdot b = 0$，则两向量**正交**（SLAM中常用于判断方向是否垂直）
 - 若 $a \cdot b > 0$，夹角 < 90°
