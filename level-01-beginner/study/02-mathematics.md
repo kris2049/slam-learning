@@ -26,7 +26,7 @@ $$||a|| = \sqrt{a_1^2 + a_2^2 + a_3^2} = \sqrt{9 + 0 + 0} = 3$$
 
 **点积 (Dot Product)**
 
-$$a \cdot b = a^{\mathsf{T}} b = a_1b_1 + a_2b_2 + a_3b_3$$
+$$a \cdot b = a^\top b = a_1b_1 + a_2b_2 + a_3b_3$$
 
 几何意义：$a \cdot b = \|a\| \cdot \|b\| \cdot \cos\theta$
 
@@ -46,7 +46,7 @@ SLAM 用途：
 
 **反对称矩阵 (Skew-Symmetric Matrix)**
 
-任意向量 $v = [x, y, z]^{\mathsf{T}}$ 可构造：
+任意向量 $v = [x, y, z]^\top$ 可构造：
 
 $$v^\wedge = \begin{bmatrix} 0 & -z & y \\ z & 0 & -x \\ -y & x & 0 \end{bmatrix}$$
 
@@ -62,10 +62,10 @@ $$v^\wedge = \begin{bmatrix} 0 & -z & y \\ z & 0 & -x \\ -y & x & 0 \end{bmatrix
 
 | 矩阵类型 | 符号 | 用途 |
 |----------|------|------|
-| 旋转矩阵 | $R$ | 3D旋转变换，$R^{\mathsf{T}}R = I$，$\det(R)=1$ |
+| 旋转矩阵 | $R$ | 3D旋转变换，$R^\top R = I$，$\det(R)=1$ |
 | 相机内参 | $K$ | 将3D相机坐标映射到2D像素 |
 | 投影矩阵 | $P = K[R \mid t]$ | 世界3D → 图像2D |
-| Hessian矩阵 | $H = J^{\mathsf{T}}J$ | 优化中的二阶信息 |
+| Hessian矩阵 | $H = J^\top J$ | 优化中的二阶信息 |
 | 协方差矩阵 | $\Sigma$ | 描述状态不确定性 |
 
 **矩阵的秩 (Rank)**
@@ -82,7 +82,7 @@ $$v^\wedge = \begin{bmatrix} 0 & -z & y \\ z & 0 & -x \\ -y & x & 0 \end{bmatrix
 
 **逆矩阵**
 
-- 旋转矩阵的特殊性质：$R^{-1} = R^{\mathsf{T}}$（正交矩阵）
+- 旋转矩阵的特殊性质：$R^{-1} = R^\top$（正交矩阵）
 - 一般矩阵求逆用 LU 分解或 SVD
 - SLAM 中 $K^{-1}$ 用于从像素坐标恢复归一化相机坐标
 
@@ -97,7 +97,7 @@ Q 是正交矩阵，R 是上三角矩阵。SLAM 中用于：
 
 ### 1.1.3 奇异值分解 (SVD) — 最重要！
 
-$$A = U \Sigma V^{\mathsf{T}}$$
+$$A = U \Sigma V^\top$$
 
 - $U$: 左奇异向量（$A$ 的列空间正交基）
 - $\Sigma$: 对角矩阵，非负奇异值降序排列
@@ -109,10 +109,10 @@ $$A = U \Sigma V^{\mathsf{T}}$$
    解 = $V$ 的最小奇异值对应的列（最后一列）
 
 2. **求解非齐次方程 $Ax = b$ 的最小二乘解**
-   $x = V \Sigma^{-1} U^{\mathsf{T}} b$
+   $x = V \Sigma^{-1} U^\top b$
 
 3. **ICP 中从点云对应求最优刚体变换**
-   $H = \sum (p_i - \bar{p})(q_i - \bar{q})^{\mathsf{T}}$，SVD 分解 H 即得最优旋转
+   $H = \sum (p_i - \bar{p})(q_i - \bar{q})^\top$，SVD 分解 H 即得最优旋转
 
 4. **强制矩阵秩约束**
    如 $E$ 矩阵秩必须为2 → 置最小奇异值为0再重构
@@ -163,7 +163,7 @@ $$A v = \lambda v$$
 
 **旋转矩阵 R ∈ SO(3)**
 
-$$SO(3) = \{R \in \mathbb{R}^{3\times3} \mid R^{\mathsf{T}}R = I,\ \det(R) = 1\}$$
+$$SO(3) = \{R \in \mathbb{R}^{3\times3} \mid R^\top R = I,\ \det(R) = 1\}$$
 
 3个自由度（绕X、Y、Z轴各一个旋转角）。
 
@@ -176,7 +176,7 @@ $$T = \begin{bmatrix} R & t \\ 0 & 1 \end{bmatrix} \in \mathbb{R}^{4\times4}$$
 
 6个自由度（3旋转 + 3平移）。
 
-变换一个点：$p' = T p$，其中 $p$ 是齐次坐标 $[x, y, z, 1]^{\mathsf{T}}$
+变换一个点：$p' = T p$，其中 $p$ 是齐次坐标 $[x, y, z, 1]^\top$
 
 **变换合成**：
 $$T_{ac} = T_{ab} \cdot T_{bc}$$
@@ -200,9 +200,9 @@ $$P_{cam} = T_{cw} \cdot P_{world} = T_{wc}^{-1} \cdot P_{world}$$
 
 SLAM 的本质是概率推断问题：
 
-$$P(\text{地图}, \text{位姿} \mid \text{观测})$$
+$$P(\text{map}, \text{pose} \mid \text{observation})$$
 
-即：给定传感器观测，地图和轨迹的**后验概率**最大是多少？
+> 给定传感器观测，地图和轨迹的**后验概率**最大是多少？
 
 ### 1.2.1 高斯分布 (正态分布)
 
@@ -223,7 +223,7 @@ $$p(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\righ
 - $[\mu-3\sigma, \mu+3\sigma]$ 包含 ~99.7% 的概率
 
 **多元高斯**：
-$$p(\mathbf{x}) = \frac{1}{(2\pi)^{n/2}|\Sigma|^{1/2}} \exp\left(-\frac{1}{2}(\mathbf{x}-\mu)^{\mathsf{T}}\Sigma^{-1}(\mathbf{x}-\mu)\right)$$
+$$p(\mathbf{x}) = \frac{1}{(2\pi)^{n/2}|\Sigma|^{1/2}} \exp\left(-\frac{1}{2}(\mathbf{x}-\mu)^\top\Sigma^{-1}(\mathbf{x}-\mu)\right)$$
 
 - $\mu$：n维均值向量
 - $\Sigma$：n×n协方差矩阵（描述各维度间的关联）
@@ -247,9 +247,9 @@ $$P(A \mid B) = \frac{P(B \mid A) \cdot P(A)}{P(B)}$$
 
 **SLAM 的贝叶斯框架**：
 
-$$\underbrace{P(X_{1:t}, M \mid Z_{1:t}, U_{1:t})}_{\text{后验：给定观测和控制，位姿和地图的概率}} \propto \underbrace{P(Z_t \mid X_t, M)}_{\text{观测模型}} \cdot \underbrace{P(X_t \mid X_{t-1}, U_t)}_{\text{运动模型}}$$
+$$\underbrace{P(X_{1:t}, M \mid Z_{1:t}, U_{1:t})}_{\text{posterior: }P(\text{map, trajectory} \mid \text{observations, controls})} \propto \underbrace{P(Z_t \mid X_t, M)}_{\text{observation model}} \cdot \underbrace{P(X_t \mid X_{t-1}, U_t)}_{\text{motion model}}$$
 
-每次新的传感器数据到来，就用贝叶斯定理**更新**我们对世界状态的信念。
+> 每次新的传感器数据到来，就用贝叶斯定理**更新**我们对世界状态的信念。
 
 ---
 
@@ -278,7 +278,7 @@ SLAM 中：
 $$P(z \mid x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(z - h(x))^2}{2\sigma^2}\right)$$
 
 取负对数：
-$$-\log P(z \mid x) = \frac{(z - h(x))^2}{2\sigma^2} + \text{常数}$$
+$$-\log P(z \mid x) = \frac{(z - h(x))^2}{2\sigma^2} + \text{const}$$
 
 所以：
 $$\arg\max_x P(z \mid x) = \arg\min_x (z - h(x))^2$$

@@ -152,15 +152,15 @@ def experiment():
     # ── 6. 可视化 ──
     fig = plt.figure(figsize=(12, 5))
 
-    # 左: 两张图像的匹配点
+    # 左: 两张图像的匹配点 (显示像素坐标)
     ax1 = fig.add_subplot(131)
-    ax1.scatter(pts1[:,2], pts1[:,1], c='blue', s=20, label='图像1')
-    ax1.scatter(pts2[:,2], pts2[:,1], c='red', s=20, marker='x', label='图像2')
-    for i in range(n_points):
-        ax1.plot([pts1[i,2], pts2[i,2]], [pts1[i,1], pts2[i,1]],
+    ax1.scatter(pts1[:,0], pts1[:,1], c='blue', s=20, label='图像1')
+    ax1.scatter(pts2[:,0], pts2[:,1], c='red', s=20, marker='x', label='图像2')
+    for i in range(min(n_points, 10)):
+        ax1.plot([pts1[i,0], pts2[i,0]], [pts1[i,1], pts2[i,1]],
                 'gray', alpha=0.3, linewidth=0.5)
-    ax1.set_title('匹配点 (仅Y-Z分量)')
-    ax1.set_xlabel('Z (深度方向像素)'); ax1.set_ylabel('Y (像素)')
+    ax1.set_title('匹配点 (像素坐标)')
+    ax1.set_xlabel('u (像素)'); ax1.set_ylabel('v (像素)')
     ax1.legend()
     ax1.invert_yaxis()
 
