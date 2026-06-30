@@ -86,7 +86,7 @@ $$a \cdot b = \| a \| \cdot \| b \| \cdot \cos\theta$$
 
 #### Cross Product
 
-$$a \times b = \begin{bmatrix} a_2b_3 - a_3b_2 \\ a_3b_1 - a_1b_3 \\ a_1b_2 - a_2b_1 \end{bmatrix}$$
+$$a \times b = \begin{bmatrix} a_2b_3 - a_3b_2 \\\\ a_3b_1 - a_1b_3 \\\\ a_1b_2 - a_2b_1 \end{bmatrix}$$
 
 Geometric meaning: the resulting vector is perpendicular to both a and b, with magnitude =
 $$\|a\| \cdot \|b\| \cdot \sin\theta$$
@@ -98,7 +98,7 @@ $$\|a\| \cdot \|b\| \cdot \sin\theta$$
 > ,
 > $$b = [4, 5, 6]^\top$$
 >
-> $$a \times b = \begin{bmatrix} 2\times6 - 3\times5 \\ 3\times4 - 1\times6 \\ 1\times5 - 2\times4 \end{bmatrix} = \begin{bmatrix} 12 - 15 \\ 12 - 6 \\ 5 - 8 \end{bmatrix} = \begin{bmatrix} -3 \\ 6 \\ -3 \end{bmatrix}$$
+> $$a \times b = \begin{bmatrix} 2\times6 - 3\times5 \\\\ 3\times4 - 1\times6 \\\\ 1\times5 - 2\times4 \end{bmatrix} = \begin{bmatrix} 12 - 15 \\\\ 12 - 6 \\\\ 5 - 8 \end{bmatrix} = \begin{bmatrix} -3 \\\\ 6 \\\\ -3 \end{bmatrix}$$
 >
 > Verify perpendicularity:
 > $$(a \times b) \cdot a = -3\times1 + 6\times2 + (-3)\times3 = -3+12-9 = 0$$
@@ -119,7 +119,7 @@ Any vector
 $$v = [x, y, z]^\top$$
 can be used to construct:
 
-$$v^\wedge = \begin{bmatrix} 0 & -z & y \\ z & 0 & -x \\ -y & x & 0 \end{bmatrix}$$
+$$v^\wedge = \begin{bmatrix} 0 & -z & y \\\\ z & 0 & -x \\\\ -y & x & 0 \end{bmatrix}$$
 
 Property:
 $$a^\wedge b = a \times b$$
@@ -129,14 +129,19 @@ $$a^\wedge b = a \times b$$
 >
 > $$v = [1, 2, 3]^\top$$
 > :
-> $$v^\wedge = \begin{bmatrix} 0 & -3 & 2 \\ 3 & 0 & -1 \\ -2 & 1 & 0 \end{bmatrix}$$
+> $$v^\wedge = \begin{bmatrix} 0 & -3 & 2 \\\\ 3 & 0 & -1 \\\\ -2 & 1 & 0 \end{bmatrix}$$
 >
-> Verify
+> Verify:
+>
 > $$v^\wedge b = v \times b$$
+>
 > (using
+>
 > $$b=[4,5,6]^\top$$
-> ):
-> $$v^\wedge b = \begin{bmatrix} 0 & -3 & 2 \\ 3 & 0 & -1 \\ -2 & 1 & 0 \end{bmatrix} \begin{bmatrix} 4 \\ 5 \\ 6 \end{bmatrix} = \begin{bmatrix} 0\times4 + (-3)\times5 + 2\times6 \\ 3\times4 + 0\times5 + (-1)\times6 \\ (-2)\times4 + 1\times5 + 0\times6 \end{bmatrix} = \begin{bmatrix} -15+12 \\ 12-6 \\ -8+5 \end{bmatrix} = \begin{bmatrix} -3 \\ 6 \\ -3 \end{bmatrix}$$
+>
+> )
+>
+> $$v^\wedge b = \begin{bmatrix} 0 & -3 & 2 \\\\ 3 & 0 & -1 \\\\ -2 & 1 & 0 \end{bmatrix} \begin{bmatrix} 4 \\\\ 5 \\\\ 6 \end{bmatrix} = \begin{bmatrix} 0\times4 + (-3)\times5 + 2\times6 \\\\ 3\times4 + 0\times5 + (-1)\times6 \\\\ (-2)\times4 + 1\times5 + 0\times6 \end{bmatrix} = \begin{bmatrix} -15+12 \\\\ 12-6 \\\\ -8+5 \end{bmatrix} = \begin{bmatrix} -3 \\\\ 6 \\\\ -3 \end{bmatrix}$$
 >
 > This matches the result of
 > $$v \times b$$
@@ -167,12 +172,12 @@ The rank of a matrix = the number of linearly independent rows/columns.
 
 > **Example 5** — Computing the rank of a matrix
 >
-> $$A = \begin{bmatrix} 1 & 2 & 3 \\ 2 & 4 & 6 \\ 3 & 6 & 9 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 1 & 2 & 3 \\\\ 2 & 4 & 6 \\\\ 3 & 6 & 9 \end{bmatrix}$$
 >
 > Observe: row 2 = row 1 × 2, row 3 = row 1 × 3 → only 1 independent row →
 > $$\text{rank}(A) = 1$$
 >
-> $$B = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \\ 7 & 8 & 9 \end{bmatrix}$$
+> $$B = \begin{bmatrix} 1 & 2 & 3 \\\\ 4 & 5 & 6 \\\\ 7 & 8 & 9 \end{bmatrix}$$
 >
 > Row 3 = 2×Row 2 − Row 1 (
 > $$[14,16,18] - [1,2,3] = [13,14,15]$$
@@ -192,12 +197,12 @@ The rank of a matrix = the number of linearly independent rows/columns.
 > **Example 6** — Computing determinants
 >
 > 2×2 matrix:
-> $$\det\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ad - bc$$
+> $$\det\begin{bmatrix} a & b \\\\ c & d \end{bmatrix} = ad - bc$$
 >
-> $$A = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix} \quad \Rightarrow \quad \det(A) = 2\times4 - 1\times3 = 8 - 3 = 5$$
+> $$A = \begin{bmatrix} 2 & 1 \\\\ 3 & 4 \end{bmatrix} \quad \Rightarrow \quad \det(A) = 2\times4 - 1\times3 = 8 - 3 = 5$$
 >
 > 3×3 matrix:
-> $$R_z(30^\circ) = \begin{bmatrix} \cos30^\circ & -\sin30^\circ & 0 \\ \sin30^\circ & \cos30^\circ & 0 \\ 0 & 0 & 1 \end{bmatrix} = \begin{bmatrix} 0.866 & -0.5 & 0 \\ 0.5 & 0.866 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R_z(30^\circ) = \begin{bmatrix} \cos30^\circ & -\sin30^\circ & 0 \\\\ \sin30^\circ & \cos30^\circ & 0 \\\\ 0 & 0 & 1 \end{bmatrix} = \begin{bmatrix} 0.866 & -0.5 & 0 \\\\ 0.5 & 0.866 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 >
 > $$\det(R_z) = 0.866 \times (0.866\times1 - 0\times0) - (-0.5) \times (0.5\times1 - 0\times0) + 0 \times (...)$$
 > $$= 0.866 \times 0.866 + 0.5 \times 0.5 = 0.75 + 0.25 = 1$$
@@ -222,24 +227,24 @@ The rank of a matrix = the number of linearly independent rows/columns.
 
 > **Example 7** — Computing the inverse matrix
 >
-> $$A = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 2 & 1 \\\\ 3 & 4 \end{bmatrix}$$
 >
 > 2×2 inverse formula:
-> $$A^{-1} = \frac{1}{\det(A)}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix} = \frac{1}{ad-bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$$
+> $$A^{-1} = \frac{1}{\det(A)}\begin{bmatrix} d & -b \\\\ -c & a \end{bmatrix} = \frac{1}{ad-bc}\begin{bmatrix} d & -b \\\\ -c & a \end{bmatrix}$$
 >
-> $$A^{-1} = \frac{1}{5}\begin{bmatrix} 4 & -1 \\ -3 & 2 \end{bmatrix} = \begin{bmatrix} 0.8 & -0.2 \\ -0.6 & 0.4 \end{bmatrix}$$
+> $$A^{-1} = \frac{1}{5}\begin{bmatrix} 4 & -1 \\\\ -3 & 2 \end{bmatrix} = \begin{bmatrix} 0.8 & -0.2 \\\\ -0.6 & 0.4 \end{bmatrix}$$
 >
 > Verification:
-> $$A A^{-1} = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix} \begin{bmatrix} 0.8 & -0.2 \\ -0.6 & 0.4 \end{bmatrix} = \begin{bmatrix} 1.6-0.6 & -0.4+0.4 \\ 2.4-2.4 & -0.6+1.6 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$$
+> $$A A^{-1} = \begin{bmatrix} 2 & 1 \\\\ 3 & 4 \end{bmatrix} \begin{bmatrix} 0.8 & -0.2 \\\\ -0.6 & 0.4 \end{bmatrix} = \begin{bmatrix} 1.6-0.6 & -0.4+0.4 \\\\ 2.4-2.4 & -0.6+1.6 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\\\ 0 & 1 \end{bmatrix}$$
 > ✓
 >
 > ---
 >
 > **Example 7b** — Special property of rotation matrices
 >
-> $$R = R_z(30^\circ) = \begin{bmatrix} 0.866 & -0.5 & 0 \\ 0.5 & 0.866 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R = R_z(30^\circ) = \begin{bmatrix} 0.866 & -0.5 & 0 \\\\ 0.5 & 0.866 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 >
-> $$R^{-1} = R^\top = \begin{bmatrix} 0.866 & 0.5 & 0 \\ -0.5 & 0.866 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R^{-1} = R^\top = \begin{bmatrix} 0.866 & 0.5 & 0 \\\\ -0.5 & 0.866 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 > (i.e., a rotation of
 > $$-30^\circ$$
 > , because
@@ -255,7 +260,7 @@ Q is an orthogonal matrix, R is an upper triangular matrix. Used in SLAM for sta
 
 > **Example 8** — QR decomposition (Gram-Schmidt)
 >
-> $$A = \begin{bmatrix} 1 & 2 \\ 3 & 2 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 1 & 2 \\\\ 3 & 2 \end{bmatrix}$$
 >
 > Column vectors:
 > $$a_1 = [1,3]^\top$$,
@@ -267,16 +272,16 @@ Q is an orthogonal matrix, R is an upper triangular matrix. Used in SLAM for sta
 >
 > **Step 2** projection:
 > **Step 2** $$r_{12} = q_1^\top a_2 = 0.3162\times2 + 0.9487\times2 = 2.5298$$
-> $$u_2 = a_2 - r_{12}q_1 = \begin{bmatrix} 2 \\ 2 \end{bmatrix} - 2.5298\begin{bmatrix} 0.3162 \\ 0.9487 \end{bmatrix} = \begin{bmatrix} 2 - 0.8 \\ 2 - 2.4 \end{bmatrix} = \begin{bmatrix} 1.2 \\ -0.4 \end{bmatrix}$$
+> $$u_2 = a_2 - r_{12}q_1 = \begin{bmatrix} 2 \\\\ 2 \end{bmatrix} - 2.5298\begin{bmatrix} 0.3162 \\\\ 0.9487 \end{bmatrix} = \begin{bmatrix} 2 - 0.8 \\\\ 2 - 2.4 \end{bmatrix} = \begin{bmatrix} 1.2 \\\\ -0.4 \end{bmatrix}$$
 > $$q_2 = \frac{u_2}{\|u_2\|} = \frac{[1.2,-0.4]^\top}{\sqrt{1.44+0.16}} = \frac{[1.2,-0.4]^\top}{\sqrt{1.6}} \approx [0.9487, -0.3162]^\top$$
 >
 > **Result**:
-> $$Q = \begin{bmatrix} 0.3162 & 0.9487 \\ 0.9487 & -0.3162 \end{bmatrix}, \quad R = \begin{bmatrix} \|u_1\| & r_{12} \\ 0 & \|u_2\| \end{bmatrix} = \begin{bmatrix} 3.1623 & 2.5298 \\ 0 & 1.2649 \end{bmatrix}$$
+> $$Q = \begin{bmatrix} 0.3162 & 0.9487 \\\\ 0.9487 & -0.3162 \end{bmatrix}, \quad R = \begin{bmatrix} \|u_1\| & r_{12} \\\\ 0 & \|u_2\| \end{bmatrix} = \begin{bmatrix} 3.1623 & 2.5298 \\\\ 0 & 1.2649 \end{bmatrix}$$
 >
 > Verification:
 > $$QR = A$$
 > ...
-> $$\begin{bmatrix}0.3162\times3.1623 & 0.3162\times2.5298+0.9487\times1.2649 \\ 0.9487\times3.1623 & 0.9487\times2.5298+(-0.3162)\times1.2649\end{bmatrix} = \begin{bmatrix}1 & 2 \\ 3 & 2\end{bmatrix} = A$$
+> $$\begin{bmatrix}0.3162\times3.1623 & 0.3162\times2.5298+0.9487\times1.2649 \\\\ 0.9487\times3.1623 & 0.9487\times2.5298+(-0.3162)\times1.2649\end{bmatrix} = \begin{bmatrix}1 & 2 \\\\ 3 & 2\end{bmatrix} = A$$
 > ✓
 
 ---
@@ -291,15 +296,15 @@ $$A = U \Sigma V^\top$$
 
 > **Example 9** — SVD worked out by hand (2×2 matrix)
 >
-> $$A = \begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix}$$
 >
 > **Step 1** Compute
 > **Step 1** $$A^\top A$$
-> $$A^\top A = \begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} \begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} = \begin{bmatrix} 10 & 6 \\ 6 & 10 \end{bmatrix}$$
+> $$A^\top A = \begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} \begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} = \begin{bmatrix} 10 & 6 \\\\ 6 & 10 \end{bmatrix}$$
 >
 > **Step 2** Find the eigenvalues and eigenvectors of
 > **Step 2** $$A^\top A$$
-> $$\det(A^\top A - \lambda I) = \det\begin{bmatrix} 10-\lambda & 6 \\ 6 & 10-\lambda \end{bmatrix} = (10-\lambda)^2 - 36 = 0$$
+> $$\det(A^\top A - \lambda I) = \det\begin{bmatrix} 10-\lambda & 6 \\\\ 6 & 10-\lambda \end{bmatrix} = (10-\lambda)^2 - 36 = 0$$
 > $$\lambda^2 - 20\lambda + 64 = 0 \quad \Rightarrow \quad \lambda_1 = 16,\ \lambda_2 = 4$$
 >
 > Singular values:
@@ -312,24 +317,24 @@ $$A = U \Sigma V^\top$$
 >
 > For
 > $$\lambda_1=16$$:
-> $$(A^\top A - 16I)v_1 = \begin{bmatrix} -6 & 6 \\ 6 & -6 \end{bmatrix} v_1 = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}[1, 1]^\top$$
+> $$(A^\top A - 16I)v_1 = \begin{bmatrix} -6 & 6 \\\\ 6 & -6 \end{bmatrix} v_1 = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}[1, 1]^\top$$
 >
 > For
 > $$\lambda_2=4$$:
-> $$(A^\top A - 4I)v_2 = \begin{bmatrix} 6 & 6 \\ 6 & 6 \end{bmatrix} v_2 = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}[1, -1]^\top$$
+> $$(A^\top A - 4I)v_2 = \begin{bmatrix} 6 & 6 \\\\ 6 & 6 \end{bmatrix} v_2 = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}[1, -1]^\top$$
 >
-> $$V = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix} \approx \begin{bmatrix} 0.7071 & 0.7071 \\ 0.7071 & -0.7071 \end{bmatrix}$$
+> $$V = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\\\ 1 & -1 \end{bmatrix} \approx \begin{bmatrix} 0.7071 & 0.7071 \\\\ 0.7071 & -0.7071 \end{bmatrix}$$
 >
 > **Step 4** Find the columns of
 > **Step 4** $$U$$
 > :
 > **Step 4** $$u_i = Av_i / \sigma_i$$
 >
-> $$u_1 = \frac{1}{4}\begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix} = \frac{1}{4\sqrt{2}}\begin{bmatrix} 4 \\ 4 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$$
-> $$u_2 = \frac{1}{2}\begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix} = \frac{1}{2\sqrt{2}}\begin{bmatrix} 2 \\ -2 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$$
+> $$u_1 = \frac{1}{4}\begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ 1 \end{bmatrix} = \frac{1}{4\sqrt{2}}\begin{bmatrix} 4 \\\\ 4 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ 1 \end{bmatrix}$$
+> $$u_2 = \frac{1}{2}\begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ -1 \end{bmatrix} = \frac{1}{2\sqrt{2}}\begin{bmatrix} 2 \\\\ -2 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ -1 \end{bmatrix}$$
 >
 > **Final SVD**:
-> $$A = \begin{bmatrix} 0.7071 & 0.7071 \\ 0.7071 & -0.7071 \end{bmatrix} \begin{bmatrix} 4 & 0 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 0.7071 & 0.7071 \\ 0.7071 & -0.7071 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 0.7071 & 0.7071 \\\\ 0.7071 & -0.7071 \end{bmatrix} \begin{bmatrix} 4 & 0 \\\\ 0 & 2 \end{bmatrix} \begin{bmatrix} 0.7071 & 0.7071 \\\\ 0.7071 & -0.7071 \end{bmatrix}$$
 
 **4 key uses of SVD in SLAM:**
 
@@ -358,7 +363,7 @@ $$A = U \Sigma V^\top$$
 
 > **Example 10** — SVD solving a least-squares problem
 >
-> $$A = \begin{bmatrix} 1 & 2 \\ 3 & 4 \\ 5 & 6 \end{bmatrix}, \quad b = \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 1 & 2 \\\\ 3 & 4 \\\\ 5 & 6 \end{bmatrix}, \quad b = \begin{bmatrix} 1 \\\\ 1 \\\\ 1 \end{bmatrix}$$
 >
 > Find
 > $$x$$
@@ -405,11 +410,11 @@ $$A v = \lambda v$$
 
 > **Example 11** — Computing eigenvalues and eigenvectors by hand
 >
-> $$A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 2 & 1 \\\\ 1 & 2 \end{bmatrix}$$
 >
 > **Step 1** Characteristic equation
 > **Step 1** $$\det(A - \lambda I) = 0$$
-> $$\det\begin{bmatrix} 2-\lambda & 1 \\ 1 & 2-\lambda \end{bmatrix} = (2-\lambda)^2 - 1 = 0$$
+> $$\det\begin{bmatrix} 2-\lambda & 1 \\\\ 1 & 2-\lambda \end{bmatrix} = (2-\lambda)^2 - 1 = 0$$
 > $$\lambda^2 - 4\lambda + 3 = 0 \quad \Rightarrow \quad (\lambda-1)(\lambda-3) = 0$$
 > $$\lambda_1 = 3,\ \lambda_2 = 1$$
 >
@@ -417,15 +422,15 @@ $$A v = \lambda v$$
 >
 > For
 > $$\lambda_1=3$$:
-> $$(A-3I)v = \begin{bmatrix} -1 & 1 \\ 1 & -1 \end{bmatrix}v = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$$
+> $$(A-3I)v = \begin{bmatrix} -1 & 1 \\\\ 1 & -1 \end{bmatrix}v = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ 1 \end{bmatrix}$$
 >
 > For
 > $$\lambda_2=1$$:
-> $$(A-I)v = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}v = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$$
+> $$(A-I)v = \begin{bmatrix} 1 & 1 \\\\ 1 & 1 \end{bmatrix}v = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ -1 \end{bmatrix}$$
 >
 > **Verification**:
 >
-> $$Av_1 = \begin{bmatrix}2&1\\1&2\end{bmatrix}\frac{1}{\sqrt{2}}\begin{bmatrix}1\\1\end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix}3\\3\end{bmatrix} = 3v_1$$
+> $$Av_1 = \begin{bmatrix}2&1\\\\1&2\end{bmatrix}\frac{1}{\sqrt{2}}\begin{bmatrix}1\\\\1\end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix}3\\\\3\end{bmatrix} = 3v_1$$
 >
 > ✓
 
@@ -444,7 +449,7 @@ $$A v = \lambda v$$
    > **Example 12** — Computing the Harris response
    >
    > Suppose the structure tensor at a certain pixel is:
-   > $$M = \begin{bmatrix} 100 & 50 \\ 50 & 100 \end{bmatrix}$$
+   > $$M = \begin{bmatrix} 100 & 50 \\\\ 50 & 100 \end{bmatrix}$$
    >
    > Eigenvalues:
    > $$\det(M-\lambda I) = (100-\lambda)^2 - 2500 = 0$$
@@ -459,7 +464,7 @@ $$A v = \lambda v$$
    > $$= 7500 - 0.04 \times 40000 = 7500 - 1600 = 5900$$
    >
    > Compare with a flat region:
-   > $$M = \begin{bmatrix} 1 & 0.1 \\ 0.1 & 1 \end{bmatrix}$$,
+   > $$M = \begin{bmatrix} 1 & 0.1 \\\\ 0.1 & 1 \end{bmatrix}$$,
    > $$\det=0.99$$,
    > $$\text{trace}=2$$
    > $$R = 0.99 - 0.04 \times 4 = 0.83 \quad\text{(small → flat)}$$
@@ -490,17 +495,17 @@ $$SO(3) = \{R \in \mathbb{R}^{3\times3} \mid R^\top R = I,\ \det(R) = 1\}$$
 Rotation about the Z axis by
 $$\theta$$:
 
-$$R_z(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+$$R_z(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\\\ \sin\theta & \cos\theta & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 
 Rotation about the X axis by
 $$\theta$$:
 
-$$R_x(\theta) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix}$$
+$$R_x(\theta) = \begin{bmatrix} 1 & 0 & 0 \\\\ 0 & \cos\theta & -\sin\theta \\\\ 0 & \sin\theta & \cos\theta \end{bmatrix}$$
 
 Rotation about the Y axis by
 $$\theta$$:
 
-$$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix}$$
+$$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\\\ 0 & 1 & 0 \\\\ -\sin\theta & 0 & \cos\theta \end{bmatrix}$$
 
 > **Example 13** — Rotating a 3D point
 >
@@ -510,12 +515,12 @@ $$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\si
 > $$\cos45^\circ = \sin45^\circ = \frac{\sqrt{2}}{2} \approx 0.7071$$
 > )
 >
-> $$R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\ 0.7071 & 0.7071 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\\\ 0.7071 & 0.7071 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 >
 > Point
 > $$P = [2, 0, 3]^\top$$
 > after rotation:
-> $$P' = R_z P = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\ 0.7071 & 0.7071 & 0 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 2 \\ 0 \\ 3 \end{bmatrix} = \begin{bmatrix} 0.7071\times2 + (-0.7071)\times0 + 0\times3 \\ 0.7071\times2 + 0.7071\times0 + 0\times3 \\ 0\times2 + 0\times0 + 1\times3 \end{bmatrix} = \begin{bmatrix} 1.414 \\ 1.414 \\ 3 \end{bmatrix}$$
+> $$P' = R_z P = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\\\ 0.7071 & 0.7071 & 0 \\\\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 2 \\\\ 0 \\\\ 3 \end{bmatrix} = \begin{bmatrix} 0.7071\times2 + (-0.7071)\times0 + 0\times3 \\\\ 0.7071\times2 + 0.7071\times0 + 0\times3 \\\\ 0\times2 + 0\times0 + 1\times3 \end{bmatrix} = \begin{bmatrix} 1.414 \\\\ 1.414 \\\\ 3 \end{bmatrix}$$
 >
 > The point originally on the X-axis
 > $$(2,0,3)$$
@@ -527,7 +532,7 @@ $$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\si
 
 #### Homogeneous Transformation Matrix T ∈ SE(3)
 
-$$T = \begin{bmatrix} R & t \\ 0 & 1 \end{bmatrix} \in \mathbb{R}^{4\times4}$$
+$$T = \begin{bmatrix} R & t \\\\ 0 & 1 \end{bmatrix} \in \mathbb{R}^{4\times4}$$
 
 6 degrees of freedom (3 rotation + 3 translation).
 
@@ -548,14 +553,14 @@ $$[x, y, z, 1]^\top$$
 > ), then translate by
 > $$[1, 2, 0]^\top$$:
 >
-> $$R = R_z(90^\circ) = \begin{bmatrix} 0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}, \quad t = \begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}$$
+> $$R = R_z(90^\circ) = \begin{bmatrix} 0 & -1 & 0 \\\\ 1 & 0 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}, \quad t = \begin{bmatrix} 1 \\\\ 2 \\\\ 0 \end{bmatrix}$$
 >
-> $$T = \begin{bmatrix} 0 & -1 & 0 & 1 \\ 1 & 0 & 0 & 2 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+> $$T = \begin{bmatrix} 0 & -1 & 0 & 1 \\\\ 1 & 0 & 0 & 2 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
 >
 > Point
 > $$P_{world} = [3, 0, 5]^\top$$
 > transformed to camera coordinates:
-> $$P_{cam} = T \begin{bmatrix} 3 \\ 0 \\ 5 \\ 1 \end{bmatrix} = \begin{bmatrix} 0\times3 + (-1)\times0 + 0\times5 + 1\times1 \\ 1\times3 + 0\times0 + 0\times5 + 1\times2 \\ 0\times3 + 0\times0 + 1\times5 + 0\times1 \\ 0+0+0+1 \end{bmatrix} = \begin{bmatrix} 1 \\ 5 \\ 5 \\ 1 \end{bmatrix}$$
+> $$P_{cam} = T \begin{bmatrix} 3 \\\\ 0 \\\\ 5 \\\\ 1 \end{bmatrix} = \begin{bmatrix} 0\times3 + (-1)\times0 + 0\times5 + 1\times1 \\\\ 1\times3 + 0\times0 + 0\times5 + 1\times2 \\\\ 0\times3 + 0\times0 + 1\times5 + 0\times1 \\\\ 0+0+0+1 \end{bmatrix} = \begin{bmatrix} 1 \\\\ 5 \\\\ 5 \\\\ 1 \end{bmatrix}$$
 >
 > i.e.,
 > $$P_{cam} = [1, 5, 5]^\top$$
@@ -581,9 +586,9 @@ $$P_{cam} = T_{cw} \cdot P_{world} = T_{wc}^{-1} \cdot P_{world}$$
 > $$[0,1,0]$$
 > )
 >
-> $$T_{ab} = \begin{bmatrix} 0 & -1 & 0 & 1 \\ 1 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}, \quad T_{bc} = \begin{bmatrix} 0 & -1 & 0 & 0 \\ 1 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+> $$T_{ab} = \begin{bmatrix} 0 & -1 & 0 & 1 \\\\ 1 & 0 & 0 & 0 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}, \quad T_{bc} = \begin{bmatrix} 0 & -1 & 0 & 0 \\\\ 1 & 0 & 0 & 1 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
 >
-> $$T_{ac} = T_{ab} \cdot T_{bc} = \begin{bmatrix} -1 & 0 & 0 & 1 \\ 0 & -1 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+> $$T_{ac} = T_{ab} \cdot T_{bc} = \begin{bmatrix} -1 & 0 & 0 & 1 \\\\ 0 & -1 & 0 & 1 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
 >
 > The composite transformation: rotation about Z by
 > $$180^\circ$$
@@ -604,7 +609,7 @@ $$P_{cam} = T_{cw} \cdot P_{world} = T_{wc}^{-1} \cdot P_{world}$$
 >
 > Rotation about the Z axis by 60°:
 >
-> $$R_z(60^\circ) = \begin{bmatrix} 0.5 & -0.866 & 0 \\ 0.866 & 0.5 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R_z(60^\circ) = \begin{bmatrix} 0.5 & -0.866 & 0 \\\\ 0.866 & 0.5 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 >
 > **Euler Angles** (ZYX):
 >
@@ -709,7 +714,7 @@ In SLAM: the covariance matrix of the camera pose describes your **uncertainty e
 >
 > Covariance matrix of a 2D pose
 > $$(x, y)$$:
-> $$\Sigma = \begin{bmatrix} 0.04 & 0.01 \\ 0.01 & 0.09 \end{bmatrix}$$
+> $$\Sigma = \begin{bmatrix} 0.04 & 0.01 \\\\ 0.01 & 0.09 \end{bmatrix}$$
 >
 > Interpretation:
 > - $$\sigma_x^2 = 0.04 \Rightarrow \sigma_x = 0.2\text{m}$$
@@ -722,7 +727,7 @@ In SLAM: the covariance matrix of the camera pose describes your **uncertainty e
 >
 > Find the eigenvalues and eigenvectors of
 > $$\Sigma$$:
-> $$\det\begin{bmatrix} 0.04-\lambda & 0.01 \\ 0.01 & 0.09-\lambda \end{bmatrix} = (0.04-\lambda)(0.09-\lambda) - 0.0001 = 0$$
+> $$\det\begin{bmatrix} 0.04-\lambda & 0.01 \\\\ 0.01 & 0.09-\lambda \end{bmatrix} = (0.04-\lambda)(0.09-\lambda) - 0.0001 = 0$$
 > $$\lambda^2 - 0.13\lambda + 0.0035 = 0 \Rightarrow \lambda_1 \approx 0.093,\ \lambda_2 \approx 0.037$$
 >
 > Semi-axis lengths of the uncertainty ellipse:
@@ -978,12 +983,12 @@ Key applications in SLAM:
 > $$u = f_x\frac{X}{Z} + c_x, \quad v = f_y\frac{Y}{Z} + c_y$$
 >
 > Jacobian matrix (partial derivatives with respect to the 3D point):
-> $$J = \begin{bmatrix} \frac{\partial u}{\partial X} & \frac{\partial u}{\partial Y} & \frac{\partial u}{\partial Z} \\ \frac{\partial v}{\partial X} & \frac{\partial v}{\partial Y} & \frac{\partial v}{\partial Z} \end{bmatrix} = \begin{bmatrix} \frac{f_x}{Z} & 0 & -\frac{f_x X}{Z^2} \\ 0 & \frac{f_y}{Z} & -\frac{f_y Y}{Z^2} \end{bmatrix}$$
+> $$J = \begin{bmatrix} \frac{\partial u}{\partial X} & \frac{\partial u}{\partial Y} & \frac{\partial u}{\partial Z} \\\\ \frac{\partial v}{\partial X} & \frac{\partial v}{\partial Y} & \frac{\partial v}{\partial Z} \end{bmatrix} = \begin{bmatrix} \frac{f_x}{Z} & 0 & -\frac{f_x X}{Z^2} \\\\ 0 & \frac{f_y}{Z} & -\frac{f_y Y}{Z^2} \end{bmatrix}$$
 >
 > When
 > $$f_x=f_y=500$$,
 > $$[X,Y,Z]=[1, 0.5, 5]^\top$$:
-> $$J = \begin{bmatrix} \frac{500}{5} & 0 & -\frac{500\times1}{25} \\ 0 & \frac{500}{5} & -\frac{500\times0.5}{25} \end{bmatrix} = \begin{bmatrix} 100 & 0 & -20 \\ 0 & 100 & -10 \end{bmatrix}$$
+> $$J = \begin{bmatrix} \frac{500}{5} & 0 & -\frac{500\times1}{25} \\\\ 0 & \frac{500}{5} & -\frac{500\times0.5}{25} \end{bmatrix} = \begin{bmatrix} 100 & 0 & -20 \\\\ 0 & 100 & -10 \end{bmatrix}$$
 >
 > J tells us: changing X (3D) affects u (pixel) by 100 pixels/meter, changing Z affects u by -20 pixels/meter.
 > The farther from the camera (larger Z), the smaller J becomes → distant points contribute less to pose optimization.
@@ -1022,13 +1027,13 @@ In SLAM:
 > Rotation vector
 > $$\phi = [0, 0, \frac{\pi}{4}]^\top$$
 > (rotation about the Z axis by 45°)
-> $$\phi^\wedge = \begin{bmatrix} 0 & -\frac{\pi}{4} & 0 \\ \frac{\pi}{4} & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}$$
+> $$\phi^\wedge = \begin{bmatrix} 0 & -\frac{\pi}{4} & 0 \\\\ \frac{\pi}{4} & 0 & 0 \\\\ 0 & 0 & 0 \end{bmatrix}$$
 >
 > Exponential map (Rodrigues formula):
 > $$R = \exp(\phi^\wedge) = I + \frac{\sin\|\phi\|}{\|\phi\|}\phi^\wedge + \frac{1-\cos\|\phi\|}{\|\phi\|^2}(\phi^\wedge)^2$$
 >
 > $$\|\phi\| = \frac{\pi}{4}, \quad \sin\frac{\pi}{4} = 0.7071, \quad 1-\cos\frac{\pi}{4} = 0.2929$$
-> $$R = I + \frac{0.7071}{\pi/4}\phi^\wedge + \cdots = R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\ 0.7071 & 0.7071 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R = I + \frac{0.7071}{\pi/4}\phi^\wedge + \cdots = R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\\\ 0.7071 & 0.7071 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 >
 > $$\exp$$
 > maps a 3-dimensional se(3) vector to a 4×4 SE(3) matrix — this is the core operation for optimizing poses.

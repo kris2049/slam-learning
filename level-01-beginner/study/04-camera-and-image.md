@@ -205,7 +205,7 @@ Used for **denoising** and **building image pyramids**.
 $$G(x,y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2+y^2}{2\sigma^2}}$$
 
 Discrete approximation:
-$$\frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 \end{bmatrix}$$
+$$\frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\\\ 2 & 4 & 2 \\\\ 1 & 2 & 1 \end{bmatrix}$$
 
 > **Example 6** — Hand-computing Gaussian Kernel and Convolution
 >
@@ -220,14 +220,14 @@ $$\frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 \end{bmatrix}$
 > Normalize (divide by sum
 > $$0.0585\times4 + 0.0965\times4 + 0.159 = 0.234+0.386+0.159=0.779$$
 > ):
-> $$\text{kernel} \approx \frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 \end{bmatrix}$$
+> $$\text{kernel} \approx \frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\\\ 2 & 4 & 2 \\\\ 1 & 2 & 1 \end{bmatrix}$$
 >
 > ---
 >
 > **Example 6b** — Convolution Operation
 >
 > 5×5 image:
-> $$I = \begin{bmatrix} 10 & 20 & 30 & 20 & 10 \\ 20 & 40 & 50 & 40 & 20 \\ 30 & 50 & 80 & 50 & 30 \\ 20 & 40 & 50 & 40 & 20 \\ 10 & 20 & 30 & 20 & 10 \end{bmatrix}$$
+> $$I = \begin{bmatrix} 10 & 20 & 30 & 20 & 10 \\\\ 20 & 40 & 50 & 40 & 20 \\\\ 30 & 50 & 80 & 50 & 30 \\\\ 20 & 40 & 50 & 40 & 20 \\\\ 10 & 20 & 30 & 20 & 10 \end{bmatrix}$$
 >
 > Convolve the center pixel (row 3, col 3, value=80):
 > $$I[2,2]_{\text{new}} = \frac{1}{16}\sum_{i=-1}^{1}\sum_{j=-1}^{1} w_{ij} \cdot I[2+i, 2+j]$$
@@ -256,7 +256,7 @@ Level 3: Further downsampled (80×60)
 ### 4.2.3 Thresholding
 
 Convert grayscale image to binary:
-$$B(x,y) = \begin{cases} 1 & I(x,y) > T \\ 0 & \text{otherwise} \end{cases}$$
+$$B(x,y) = \begin{cases} 1 & I(x,y) > T \\\\ 0 & \text{otherwise} \end{cases}$$
 
 > **Example 7** — Thresholding
 >
@@ -264,9 +264,9 @@ $$B(x,y) = \begin{cases} 1 & I(x,y) > T \\ 0 & \text{otherwise} \end{cases}$$
 > $$T=128$$
 > ):
 >
-> $$I = \begin{bmatrix} 50 & 200 & 150 & 80 & 255 \\ 30 & 180 & 90 & 120 & 100 \\ 200 & 250 & 130 & 60 & 40 \\ 100 & 90 & 70 & 180 & 200 \\ 0 & 255 & 160 & 140 & 110 \end{bmatrix}$$
+> $$I = \begin{bmatrix} 50 & 200 & 150 & 80 & 255 \\\\ 30 & 180 & 90 & 120 & 100 \\\\ 200 & 250 & 130 & 60 & 40 \\\\ 100 & 90 & 70 & 180 & 200 \\\\ 0 & 255 & 160 & 140 & 110 \end{bmatrix}$$
 >
-> $$B = \begin{bmatrix} 0 & 1 & 1 & 0 & 1 \\ 0 & 1 & 0 & 0 & 0 \\ 1 & 1 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 & 1 \\ 0 & 1 & 1 & 1 & 0 \end{bmatrix}$$
+> $$B = \begin{bmatrix} 0 & 1 & 1 & 0 & 1 \\\\ 0 & 1 & 0 & 0 & 0 \\\\ 1 & 1 & 1 & 0 & 0 \\\\ 0 & 0 & 0 & 1 & 1 \\\\ 0 & 1 & 1 & 1 & 0 \end{bmatrix}$$
 >
 > This produces a binary mask that can be used for:
 > - Scene segmentation (detecting floor/walls)
@@ -286,7 +286,7 @@ $$B(x,y) = \begin{cases} 1 & I(x,y) > T \\ 0 & \text{otherwise} \end{cases}$$
 
 **Sobel Operator** (first-order derivative approximation):
 
-$$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix} \quad G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix}$$
+$$G_x = \begin{bmatrix} -1 & 0 & 1 \\\\ -2 & 0 & 2 \\\\ -1 & 0 & 1 \end{bmatrix} \quad G_y = \begin{bmatrix} -1 & -2 & -1 \\\\ 0 & 0 & 0 \\\\ 1 & 2 & 1 \end{bmatrix}$$
 
 Gradient magnitude:
 $$M = \sqrt{G_x^2 + G_y^2}$$
@@ -296,7 +296,7 @@ $$\theta = \arctan(G_y / G_x)$$
 > **Example 8** — Sobel Gradient Calculation (by hand)
 >
 > 5×5 image (edge in the middle):
-> $$I = \begin{bmatrix} 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \end{bmatrix}$$
+> $$I = \begin{bmatrix} 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \end{bmatrix}$$
 >
 > Compute $G_x$ for center pixel (row 3, col 3, value=10):
 >
@@ -360,7 +360,7 @@ Step 4: **Double thresholding + hysteresis** → strong edges connect to weak ed
 
 1. Compute image gradients $I_x, I_y$
 2. Construct the Structure Tensor:
-   $$M = \sum_{window} w(x,y) \begin{bmatrix} I_x^2 & I_x I_y \\ I_x I_y & I_y^2 \end{bmatrix}$$
+   $$M = \sum_{window} w(x,y) \begin{bmatrix} I_x^2 & I_x I_y \\\\ I_x I_y & I_y^2 \end{bmatrix}$$
 3. Compute the Harris response:
    $$R = \det(M) - k \cdot \text{trace}(M)^2$$
    where
@@ -375,7 +375,7 @@ Step 4: **Double thresholding + hysteresis** → strong edges connect to weak ed
 > **Example 10** — Harris Corner Hand Calculation (3×3 window)
 >
 > 3×3 window gradients:
-> $$I_x = \begin{bmatrix} 5 & 8 & 5 \\ 6 & 10 & 6 \\ 5 & 8 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 5 & 6 & 5 \\ 8 & 10 & 8 \\ 5 & 6 & 5 \end{bmatrix}$$
+> $$I_x = \begin{bmatrix} 5 & 8 & 5 \\\\ 6 & 10 & 6 \\\\ 5 & 8 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 5 & 6 & 5 \\\\ 8 & 10 & 8 \\\\ 5 & 6 & 5 \end{bmatrix}$$
 >
 > (This is a corner! Large gradients in both X and Y)
 >
@@ -386,7 +386,7 @@ Step 4: **Double thresholding + hysteresis** → strong edges connect to weak ed
 > $$= 25+48+25+48+100+48+25+48+25 = 392$$
 >
 > **Step 2**: Construct M
-> $$M = \begin{bmatrix} 400 & 392 \\ 392 & 400 \end{bmatrix}$$
+> $$M = \begin{bmatrix} 400 & 392 \\\\ 392 & 400 \end{bmatrix}$$
 >
 > **Step 3**: Compute Harris response
 > $$\det(M) = 400\times400 - 392\times392 = 160000 - 153664 = 6336$$
@@ -400,13 +400,13 @@ Step 4: **Double thresholding + hysteresis** → strong edges connect to weak ed
 >
 > **Example 10b** — A True Corner
 >
-> $$I_x = \begin{bmatrix} 5 & 0 & 5 \\ 0 & 10 & 0 \\ 5 & 0 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 0 & 5 & 0 \\ 5 & 10 & 5 \\ 0 & 5 & 0 \end{bmatrix}$$
+> $$I_x = \begin{bmatrix} 5 & 0 & 5 \\\\ 0 & 10 & 0 \\\\ 5 & 0 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 0 & 5 & 0 \\\\ 5 & 10 & 5 \\\\ 0 & 5 & 0 \end{bmatrix}$$
 >
 > $$\sum I_x^2 = 25+0+25+0+100+0+25+0+25 = 200$$
 > $$\sum I_y^2 = 0+25+0+25+100+25+0+25+0 = 200$$
 > $$\sum I_x I_y = 0+0+0+0+0+0+0+0+0 = 0$$
 >
-> $$M = \begin{bmatrix} 200 & 0 \\ 0 & 200 \end{bmatrix}$$
+> $$M = \begin{bmatrix} 200 & 0 \\\\ 0 & 200 \end{bmatrix}$$
 > $$\det(M) = 40000, \quad \text{trace}(M) = 400$$
 > $$R = 40000 - 0.04\times160000 = 40000 - 6400 = 33600$$
 >
