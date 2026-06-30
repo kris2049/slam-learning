@@ -1,226 +1,170 @@
 """
-练习 1: SLAM 所需的线性代数基础
-===================================
-完成以下任务来巩固你的线性代数知识。
-每个任务都有 ✅ 验证 — 运行脚本即自动检查。
+练习 1: 线性代数 (交互式)
+===========================
+把 `# TODO` 标记的行改成正确代码，然后运行。
+检查通过才算完成。
 """
 
 import numpy as np
 
 def task_01_vectors():
-    """任务1: 向量基本运算 (5分钟)
-    
-    SLAM 中处处是向量：3D点、速度、平移都是向量。
+    """任务1: 向量运算
+
+            a = [3, 0, 0],  b = [0, 4, 0]
     """
     print("\n═══ 任务1: 向量运算 ═══")
-    
-    # 定义两个3D向量（SLAM中代表空间点或方向）
-    a = np.array([3.0, 0.0, 0.0])   # 沿X轴
-    b = np.array([0.0, 4.0, 0.0])   # 沿Y轴
-    
-    # TODO: 计算以下内容
-    # 1. 向量的模 (L2范数)
-    norm_a = np.linalg.norm(a)
-    norm_b = np.linalg.norm(b)
-    print(f"  |a| = {norm_a:.1f}  (应该是 3.0)")
-    print(f"  |b| = {norm_b:.1f}  (应该是 4.0)")
-    
-    # 2. 点积 (dot product) - SLAM中用于计算角度
-    dot = np.dot(a, b)
-    print(f"  a·b = {dot:.1f}  (应该是 0.0 — 正交)")
-    
-    # 3. 叉积 (cross product) - SLAM中用于计算法向量
-    cross = np.cross(a, b)
-    print(f"  a×b = {cross}  (应该是 [0, 0, 12] — 沿Z轴)")
-    
-    # 4. 夹角（用点积推导）
-    cos_angle = dot / (norm_a * norm_b)
-    angle = np.arccos(np.clip(cos_angle, -1, 1))
-    print(f"  夹角 = {np.degrees(angle):.1f}°  (应该是 90°)")
-    
-    # 验证点积和叉积的关系
-    assert abs(dot) < 0.01, "点积应为0（正交向量）"
-    assert np.allclose(cross, [0, 0, 12]), "叉积应为 [0, 0, 12]"
-    print("  ✅ 通过!")
+    a = np.array([3.0, 0.0, 0.0])
+    b = np.array([0.0, 4.0, 0.0])
+
+    # ─── 改下面的 TODO ───
+    # TODO 1: 计算 a 的 L2 范数
+    norm_a = 0  # TODO: 改成 np.linalg.norm(a)
+
+    # TODO 2: 计算 a 和 b 的点积
+    dot = 0  # TODO: 改成 np.dot(a, b)
+
+    # TODO 3: 计算叉积
+    cross = np.zeros(3)  # TODO: 改成 np.cross(a, b)
+
+    # TODO 4: 计算夹角 (度数)
+    angle_deg = 0  # TODO: 用点积+arccos+degrees
+
+    # ─── 验证 ───
+    print(f"  |a| = {norm_a}     (应≈3.0)")
+    print(f"  a·b = {dot}        (应≈0.0)")
+    print(f"  a×b = {cross}")
+    print(f"  夹角 = {angle_deg:.1f}° (应≈90°)")
+
+    ok = True
+    if abs(norm_a - 3.0) > 0.1 or norm_a == 0:
+        print("  ❌ norm_a 不对。提示: np.linalg.norm(a)"); ok = False
+    if abs(dot) > 0.1 or dot == 0:
+        print("  ❌ dot 不对。提示: np.dot(a, b)"); ok = False
+    if not np.allclose(cross, [0, 0, 12]):
+        print("  ❌ cross 不对。提示: np.cross(a, b)"); ok = False
+    if abs(angle_deg - 90) > 1:
+        print("  ❌ angle_deg 不对。步骤: cos = dot/(|a|*|b|) → arccos → degrees"); ok = False
+
+    if ok: print("  ✅ 通过!")
+    return ok
 
 
 def task_02_matrices():
-    """任务2: 矩阵运算 (10分钟)
-    
-    旋转矩阵和变换矩阵是 SLAM 的核心。
+    """任务2: 旋转矩阵
+
+    绕 Z 轴旋转 30° 的 2D 矩阵。
     """
-    print("\n═══ 任务2: 矩阵运算 ═══")
-    
-    # 2D 旋转矩阵 (绕 Z 轴旋转 θ)
-    theta = np.radians(30)  # 30度
-    R_2d = np.array([
-        [np.cos(theta), -np.sin(theta)],
-        [np.sin(theta),  np.cos(theta)]
-    ])
-    print(f"  2D旋转矩阵(30°):\n{R_2d}")
-    
-    # 旋转一个向量
-    v = np.array([1.0, 0.0])
-    rotated = R_2d @ v
-    print(f"  旋转 [1,0] 后: {rotated}  (应该是 [cos30, sin30])")
-    
-    # TODO: 计算行列式 (必须是1，旋转矩阵保持体积)
-    det = np.linalg.det(R_2d)
-    print(f"  det(R) = {det:.6f}  (旋转矩阵行列式应为 1)")
-    
-    # TODO: 计算逆矩阵 (旋转矩阵的逆 = 转置)
-    R_inv = np.linalg.inv(R_2d)
-    print(f"  R 的逆等于转置? {np.allclose(R_inv, R_2d.T)}  (应该是 True)")
-    
-    # 验证: R * R^T = I
-    I_check = R_2d @ R_2d.T
-    print(f"  R*R^T = I? {np.allclose(I_check, np.eye(2))}")
-    
-    assert abs(det - 1.0) < 0.01
-    assert np.allclose(R_inv @ rotated, v)
-    print("  ✅ 通过!")
+    print("\n═══ 任务2: 旋转矩阵 ═══")
 
-
-def task_03_eigen_and_svd():
-    """任务3: 特征值分解 与 SVD (15分钟)
-    
-    SVD 是对极几何和 PnP 求解的核心工具。
-    """
-    print("\n═══ 任务3: 特征值与 SVD ═══")
-    
-    # 创建一个对称矩阵（类似 SLAM 中的 Hessian 矩阵）
-    A = np.array([
-        [3.0, 1.0, 0.0],
-        [1.0, 3.0, 1.0],
-        [0.0, 1.0, 3.0]
-    ])
-    
-    # TODO: 特征值分解
-    eigvals, eigvecs = np.linalg.eig(A)
-    print(f"  特征值: {eigvals}")
-    print(f"  特征向量:\n{eigvecs}")
-    
-    # 验证: A * v = λ * v
-    for i in range(3):
-        lhs = A @ eigvecs[:, i]
-        rhs = eigvals[i] * eigvecs[:, i]
-        assert np.allclose(lhs, rhs, rtol=1e-8), f"特征值{i}验证失败"
-    print("  ✅ 特征值分解验证通过")
-    
-    # TODO: SVD 分解 (A = U Σ V^T)
-    U, S, Vt = np.linalg.svd(A)
-    print(f"  奇异值: {S}")
-    
-    # 验证: U @ diag(S) @ Vt ≈ A
-    A_reconstructed = U @ np.diag(S) @ Vt
-    print(f"  重构误差: {np.max(np.abs(A - A_reconstructed)):.2e}")
-    assert np.allclose(A, A_reconstructed)
-    
-    # SVD 在 SLAM 中的应用: 求解超定线性方程组的最小二乘解
-    # Ax = b 的最小二乘解: x = V @ diag(1/s) @ U^T @ b
-    b = np.array([1.0, 2.0, 3.0])
-    x_svd = Vt.T @ np.diag(1/S) @ U.T @ b
-    x_np = np.linalg.lstsq(A, b, rcond=None)[0]
-    print(f"  SVD 求解: {x_svd}")
-    print(f"  NumPy 求解: {x_np}")
-    assert np.allclose(x_svd, x_np)
-    print("  ✅ SVD 分解验证通过")
-
-
-def task_04_rigid_transforms():
-    """任务4: 刚体变换与齐次坐标 (15分钟)
-    
-    SLAM 中相机位姿用 SE(3) 变换表示。
-    """
-    print("\n═══ 任务4: 刚体变换 ═══")
-    
-    # 3D 旋转矩阵 (绕 Z 轴 45°)
-    theta = np.radians(45)
-    R = np.array([
-        [np.cos(theta), -np.sin(theta), 0],
-        [np.sin(theta),  np.cos(theta), 0],
-        [0,             0,             1]
-    ])
-    
-    # 平移向量
-    t = np.array([1.0, 2.0, 3.0])
-    
-    # TODO: 构造 4x4 齐次变换矩阵 T ∈ SE(3)
-    T = np.eye(4)
-    T[:3, :3] = R
-    T[:3, 3] = t
-    print(f"  齐次变换矩阵 T:\n{T}")
-    
-    # 变换一个 3D 点 (齐次坐标)
-    p_3d = np.array([1.0, 1.0, 1.0, 1.0])  # 齐次坐标
-    p_transformed = T @ p_3d
-    print(f"  点 [1,1,1] 变换后: {p_transformed[:3]}")
-    
-    # TODO: 计算 T 的逆（把点变回去）
-    T_inv = np.linalg.inv(T)
-    p_back = T_inv @ p_transformed
-    print(f"  逆变换回去: {p_back[:3]}")
-    assert np.allclose(p_back[:3], [1, 1, 1])
-    
-    # 验证 SE(3) 性质: T_inv 应该等于 [R^T | -R^T * t]
-    T_inv_expected = np.eye(4)
-    T_inv_expected[:3, :3] = R.T
-    T_inv_expected[:3, 3] = -R.T @ t
-    print(f"  T^{-1} = [R^T | -R^T t]? {np.allclose(T_inv, T_inv_expected)}")
-    
-    print("  ✅ 通过!")
-
-
-def task_05_transformation_chains():
-    """任务5: 变换链 (10分钟)
-    
-    SLAM 中相机在世界坐标系中的位姿通过变换链计算。
-    """
-    print("\n═══ 任务5: 变换链 ═══")
-    
-    # 世界坐标系中有一个点
-    P_world = np.array([5.0, 0.0, 0.0, 1.0])
-    
-    # 相机在世界坐标系中的位姿 T_wc (camera from world)
     theta = np.radians(30)
-    R_wc = np.array([
-        [np.cos(theta), -np.sin(theta), 0],
-        [np.sin(theta),  np.cos(theta), 0],
-        [0,             0,             1]
-    ])
-    t_wc = np.array([2.0, 1.0, 0.0])
-    T_wc = np.eye(4)
-    T_wc[:3, :3] = R_wc
-    T_wc[:3, 3] = t_wc
-    
-    # TODO: 世界点变换到相机坐标系
-    # P_camera = T_cw * P_world = T_wc^{-1} * P_world
-    T_cw = np.linalg.inv(T_wc)
-    P_camera = T_cw @ P_world
-    print(f"  世界点 {P_world[:3]} → 相机坐标: {P_camera[:3]}")
-    
-    # TODO: 相机点再变回世界坐标
-    P_world_back = T_wc @ P_camera
-    print(f"  变回世界: {P_world_back[:3]}")
-    assert np.allclose(P_world_back[:3], P_world[:3])
-    
-    # 再引入一个物体坐标系 (object frame)
-    T_wo = np.eye(4)  # 物体在世界中的位姿
-    T_wo[:3, 3] = [3.0, 0.0, 0.0]
-    
-    # TODO: 物体上的点在相机坐标系中的位置
-    # P_cam = T_cw * T_wo * P_obj
-    P_obj = np.array([0.5, 0.5, 0.0, 1.0])  # 物体上的点
-    P_cam_from_obj = T_cw @ T_wo @ P_obj
-    print(f"  物体点 {P_obj[:3]} → 相机坐标: {P_cam_from_obj[:3]}")
-    
-    print("  ✅ 通过!")
+    v = np.array([1.0, 0.0])
+
+    # TODO: 构造 2x2 旋转矩阵 (绕Z轴转 theta 度)
+    R = np.zeros((2, 2))  # TODO: 改成正确的旋转矩阵
+
+    # TODO: 用 R 旋转 v
+    rotated = np.zeros(2)  # TODO: 改成 R @ v
+
+    # TODO: 计算行列式
+    det_R = 0  # TODO: 改成 np.linalg.det(R)
+
+    print(f"  R = \n{R}")
+    print(f"  rotated = {rotated}  (应≈[0.866, 0.5])")
+    print(f"  det(R) = {det_R}  (应≈1.0)")
+
+    ok = True
+    if abs(det_R - 1.0) > 0.01:
+        print("  ❌ det(R)≠1。旋转矩阵: R[0,0]=cosθ, R[0,1]=-sinθ, R[1,0]=sinθ, R[1,1]=cosθ"); ok = False
+    if abs(rotated[0] - 0.866) > 0.01:
+        print("  ❌ rotated 不对。提示: R @ v"); ok = False
+
+    if ok: print("  ✅ 通过!")
+    return ok
+
+
+def task_03_svd():
+    """任务3: SVD 解 Ax=0
+
+    八点法求基础矩阵时，解 = V 的最后一列。
+    """
+    print("\n═══ 任务3: SVD 解 Ax=0 ═══")
+
+    A = np.random.RandomState(42).randn(9, 9)
+    A[:, -1] = A[:, 0] * 0.5 + A[:, 1] * 0.3
+
+    # TODO: SVD 分解
+    U = np.zeros((9, 9))       # TODO: np.linalg.svd(A) 返回 U, S, Vt
+    S = np.zeros(9)
+    Vt = np.zeros((9, 9))
+
+    # TODO: 取最小奇异值对应的向量
+    x = np.zeros(9)  # TODO: x = Vt[-1] (最后一列)
+
+    # TODO: 验证 Ax ≈ 0
+    residual = 999  # TODO: np.linalg.norm(A @ x)
+
+    print(f"  奇异值: {S.round(3)}")
+    print(f"  ||Ax|| = {residual:.2e}  (应≈0)")
+
+    ok = True
+    if residual > 0.1:
+        print("  ❌ residual 太大。提示:"); ok = False
+        print("    U, S, Vt = np.linalg.svd(A)")
+        print("    x = Vt[-1]")
+        print("    residual = np.linalg.norm(A @ x)")
+
+    if ok: print("  ✅ 通过!")
+    return ok
+
+
+def task_04_rigid_transform():
+    """任务4: 齐次变换矩阵
+
+    绕 Z 轴转 45°，平移 [1, 2, 3]。
+    """
+    print("\n═══ 任务4: 齐次变换 ═══")
+
+    theta = np.radians(45)
+
+    # TODO: 绕 Z 轴的 3x3 旋转矩阵
+    R = np.zeros((3, 3))  # TODO: 填入正确值
+
+    # TODO: 4x4 齐次变换矩阵
+    t = np.array([1.0, 2.0, 3.0])
+    T = np.eye(4)  # TODO: T[:3,:3] = R; T[:3,3] = t
+
+    # TODO: T 的逆
+    T_inv = np.eye(4)  # TODO: np.linalg.inv(T)
+
+    # 验证
+    p = np.array([1, 1, 1, 1.0])
+    p_trans = np.zeros(4)  # TODO: T @ p
+    p_back = np.zeros(4)    # TODO: T_inv @ p_trans
+
+    diff = np.linalg.norm(p_back - p)
+    print(f"  T = \n{T}")
+    print(f"  p_trans = {p_trans[:3]}")
+    print(f"  逆回去误差 = {diff:.4f} (应≈0)")
+
+    ok = True
+    if diff > 0.01:
+        print("  ❌ 变换不对。提示:"); ok = False
+        print("    R[0,0]=cosθ, R[0,1]=-sinθ")
+        print("    R[1,0]=sinθ, R[1,1]=cosθ, R[2,2]=1")
+        print("    T[:3,:3]=R; T[:3,3]=t")
+        print("    T_inv = np.linalg.inv(T)")
+
+    if ok: print("  ✅ 通过!")
+    return ok
 
 
 if __name__ == "__main__":
-    task_01_vectors()
-    task_02_matrices()
-    task_03_eigen_and_svd()
-    task_04_rigid_transforms()
-    task_05_transformation_chains()
-    print("\n🎉 所有线性代数练习完成!")
+    results = [task_01_vectors(), task_02_matrices(),
+               task_03_svd(), task_04_rigid_transform()]
+    passed = sum(results)
+    print(f"\n{'='*40}")
+    print(f"  通过: {passed}/{len(results)}")
+    if passed == len(results):
+        print("  🎉 全部完成!")
+    else:
+        print(f"  还有 {len(results)-passed} 个任务，改完重跑。")
