@@ -37,7 +37,7 @@ $a \cdot b = \| a \| \cdot \| b \| \cdot \cos\theta$
 
 **叉积 (Cross Product)**
 
-$$a \times b = \begin{bmatrix} a_2b_3 - a_3b_2 \\ a_3b_1 - a_1b_3 \\ a_1b_2 - a_2b_1 \end{bmatrix}$$
+$$a \times b = \begin{bmatrix} a_2b_3 - a_3b_2 \,  a_3b_1 - a_1b_3 \,  a_1b_2 - a_2b_1 \end{bmatrix}$$
 
 几何意义：结果向量垂直于 a 和 b，模长 = $\|a\| \cdot \|b\| \cdot \sin\theta$
 
@@ -49,7 +49,7 @@ SLAM 用途：
 
 任意向量 $v = [x, y, z]^\top$ 可构造：
 
-$$v^\wedge = \begin{bmatrix} 0 & -z & y \\ z & 0 & -x \\ -y & x & 0 \end{bmatrix}$$
+$$v^\wedge = \begin{bmatrix} 0 & -z & y \\\\ z & 0 & -x \\\\ -y & x & 0 \end{bmatrix}$$
 
 性质：
 $a^\wedge b = a \times b$（反对称矩阵乘向量 = 叉积）
@@ -64,7 +64,7 @@ $a^\wedge b = a \times b$（反对称矩阵乘向量 = 叉积）
 
 | 矩阵类型 | 符号 | 用途 |
 |----------|------|------|
-| 旋转矩阵 | $R$ | 3D旋转变换，$R^\top R = I$，$\det(R)=1$ |
+| 旋转矩阵 | $R$ | $R^\top R = I$, $\det(R)=1$ 3D旋转变换|
 | 相机内参 | $K$ | 将3D相机坐标映射到2D像素 |
 | 投影矩阵 | $P = K[R \mid t]$ | 世界3D → 图像2D |
 | Hessian矩阵 | $H = J^\top J$ | 优化中的二阶信息 |
@@ -84,7 +84,7 @@ $a^\wedge b = a \times b$（反对称矩阵乘向量 = 叉积）
 
 **逆矩阵**
 
-- 旋转矩阵的特殊性质：$R^{-1} = R^\top$（正交矩阵）
+- 旋转矩阵的特殊性质: $R^{-1} = R^\top$（正交矩阵）
 - 一般矩阵求逆用 LU 分解或 SVD
 - SLAM 中 $K^{-1}$ 用于从像素坐标恢复归一化相机坐标
 
@@ -101,9 +101,9 @@ Q 是正交矩阵，R 是上三角矩阵。SLAM 中用于：
 
 $$A = U \Sigma V^\top$$
 
-- $U$: 左奇异向量（$A$ 的列空间正交基）
+- $U$: 左奇异向量($A$ 的列空间正交基)
 - $\Sigma$: 对角矩阵，非负奇异值降序排列
-- $V$: 右奇异向量（$A$ 的行空间正交基）
+- $V$: 右奇异向量($A$ 的行空间正交基)
 
 **SLAM 中的4个关键用途：**
 
@@ -148,7 +148,7 @@ $$A v = \lambda v$$
    - $\lambda_1 \gg \lambda_2$ 或反之 → **边缘**（只一个方向有大梯度）
    - 都小 → **平坦区域**
 
-   Harris 响应：$R = \lambda_1\lambda_2 - k(\lambda_1+\lambda_2)^2$
+   Harris 响应: $R = \lambda_1\lambda_2 - k(\lambda_1+\lambda_2)^2$
    等价于 $R = \det(M) - k \cdot \text{trace}(M)^2$
 
 2. **PCA（主成分分析）**
@@ -169,16 +169,17 @@ $$SO(3) = \{R \in \mathbb{R}^{3\times3} \mid R^\top R = I,\ \det(R) = 1\}$$
 
 3个自由度（绕X、Y、Z轴各一个旋转角）。
 
-绕 Z 轴旋转 $\theta$：
-$$R_z(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+绕 Z 轴旋转 $\theta$:
+
+$$R_z(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\\\ \sin\theta & \cos\theta & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 
 **齐次变换矩阵 T ∈ SE(3)**
 
-$$T = \begin{bmatrix} R & t \\ 0 & 1 \end{bmatrix} \in \mathbb{R}^{4\times4}$$
+$$T = \begin{bmatrix} R & t \\\\ 0 & 1 \end{bmatrix} \in \mathbb{R}^{4\times4}$$
 
 6个自由度（3旋转 + 3平移）。
 
-变换一个点：$p' = T p$，其中 $p$ 是齐次坐标 $[x, y, z, 1]^\top$
+变换一个点: $p' = T p$，其中 $p$ 是齐次坐标 $[x, y, z, 1]^\top$
 
 **变换合成**：
 $$T_{ac} = T_{ab} \cdot T_{bc}$$
@@ -224,7 +225,8 @@ $$p(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\righ
 - $[\mu-2\sigma, \mu+2\sigma]$ 包含 ~95% 的概率
 - $[\mu-3\sigma, \mu+3\sigma]$ 包含 ~99.7% 的概率
 
-**多元高斯**：
+**多元高斯**:
+
 $$p(\mathbf{x}) = \frac{1}{(2\pi)^{n/2}|\Sigma|^{1/2}} \exp\left(-\frac{1}{2}(\mathbf{x}-\mu)^\top\Sigma^{-1}(\mathbf{x}-\mu)\right)$$
 
 - $\mu$：n维均值向量
@@ -257,14 +259,16 @@ $$\underbrace{P(X_{1:t}, M \mid Z_{1:t}, U_{1:t})}_{\text{posterior: }P(\text{ma
 
 ### 1.2.3 最大似然估计 (MLE) 与最大后验估计 (MAP)
 
-**MLE（最大似然）**：
+**MLE（最大似然）**:
+
 $$\hat{\theta}_{\text{MLE}} = \arg\max_\theta P(D \mid \theta)$$
 
 「哪种参数最可能产生我们观察到的数据？」
 
 SLAM 中：给定匹配点，最可能的相机位姿 → **这就是 PnP 的精神！**
 
-**MAP（最大后验）**：
+**MAP（最大后验）**:
+
 $$\hat{\theta}_{\text{MAP}} = \arg\max_\theta P(\theta \mid D) = \arg\max_\theta P(D \mid \theta)P(\theta)$$
 
 比 MLE 多了一个先验 $P(\theta)$。
@@ -275,7 +279,9 @@ SLAM 中：
 
 **为什么最小化平方误差等同于 MLE？**
 
-假设观测噪声是高斯分布：$z = h(x) + \epsilon,\ \epsilon \sim \mathcal{N}(0, \sigma^2)$
+假设观测噪声是高斯分布: 
+
+$z = h(x) + \epsilon,\ \epsilon \sim \mathcal{N}(0, \sigma^2)$
 
 $$P(z \mid x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(z - h(x))^2}{2\sigma^2}\right)$$
 
