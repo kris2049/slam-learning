@@ -1,587 +1,558 @@
-# 模块4: 相机设备与图像处理
+# Module 4: Camera Device and Image Processing
 
-> 覆盖 visual-slam-roadmap Level 1 的「Camera Device」和「Image Data」全部内容。
-> 每个公式都配有**完整的数值计算示例**。
+> Covers everything in "Camera Device" and "Image Data" from visual-slam-roadmap Level 1.
+> Each formula is accompanied by a **complete numerical calculation example**.
 
 ---
 
-## 4.1 相机硬件基础
+## 4.1 Camera Hardware Basics
 
-### 4.1.1 镜头 (Lens)
+### 4.1.1 Lens
 
-| 参数 | 含义 | SLAM 影响 |
+| Parameter | Meaning | SLAM Impact |
 |------|------|-----------|
-| **焦距 f** | 镜头光学中心到传感器的距离 | 决定视野(FOV)和 K 矩阵的 $f_x, f_y$ |
-| **光圈/孔径** | 控制进光量 (f/2.8, f/4...) | 影响景深和曝光 |
-| **视场角 FOV** | 水平/垂直的可见角度范围 | $\tan(\text{FOV}/2) = (\text{sensor width} / 2) / f$ |
-| **畸变** | 实际投影偏离理想模型 | 需要标定矫正 |
+| **Focal Length f** | Distance from lens optical center to sensor | Determines field of view (FOV) and $f_x, f_y$ in K matrix |
+| **Aperture** | Controls light intake (f/2.8, f/4...) | Affects depth of field and exposure |
+| **Field of View FOV** | Visible horizontal/vertical angular range | $\tan(\text{FOV}/2) = (\text{sensor width} / 2) / f$ |
+| **Distortion** | Actual projection deviates from ideal model | Requires calibration correction |
 
-> **示例 1** — FOV 计算
+> **Example 1** — FOV Calculation
 >
-> 传感器宽度 = 6.4mm，焦距 f = 8mm
+> Sensor width = 6.4mm, focal length f = 8mm
 >
 > $$\frac{\text{FOV}}{2} = \arctan\left(\frac{6.4/2}{8}\right) = \arctan\left(\frac{3.2}{8}\right) = \arctan(0.4) \approx 21.8^\circ$$
 >
 > $$\text{FOV}_{\text{horizontal}} \approx 43.6^\circ$$
 >
-> 同样方法计算垂直 FOV (传感器高度 4.8mm):
+> Calculate vertical FOV the same way (sensor height 4.8mm):
 > $$\text{FOV}_{\text{vertical}} = 2 \times \arctan\left(\frac{2.4}{8}\right) \approx 33.4^\circ$$
 >
 > ---
 >
-> **示例 1b** — 从 FOV 反推焦距
+> **Example 1b** — Back-calculating Focal Length from FOV
 >
-> 已知水平 FOV = 90°, 传感器宽度 = 6.4mm
+> Given horizontal FOV = 90°, sensor width = 6.4mm
 > $$\tan(45^\circ) = \frac{3.2}{f} = 1 \quad \Rightarrow \quad f = 3.2\text{mm}$$
 >
-> 广角镜头！这就是很多 AR 眼镜使用短焦距的原因。
+> Wide-angle lens! This is why many AR glasses use short focal lengths.
 
-**镜头类型与 SLAM 选择**：
+**Lens Types and SLAM Selection**:
 
-| 类型 | 焦距 | FOV | 典型用途 |
+| Type | Focal Length | FOV | Typical Use |
 |------|------|-----|----------|
-| 广角 | < 24mm | > 80° | 室内SLAM（AR眼镜） |
-| 标准 | 35-50mm | ~50° | 一般用途 |
-| 长焦/望远 | > 85mm | < 30° | 远距离SLAM |
+| Wide-angle | < 24mm | > 80° | Indoor SLAM (AR glasses) |
+| Standard | 35-50mm | ~50° | General purpose |
+| Telephoto | > 85mm | < 30° | Long-range SLAM |
 
-**广角镜头对 SLAM 的影响**：
-- ✅ 更大视野 → 特征在帧间停留更久 → 更好的跟踪✅ 近距离也能看到足够场景❌ 严重畸变 → 必须矫正❌ 单位像素对应更大的角度 → 角分辨率降低
+**Impact of Wide-angle Lenses on SLAM**:
+- ✅ Larger FOV → features stay in view across frames longer → better tracking
+- ✅ Can see enough scene even at close range
+- ❌ Severe distortion → must be corrected
+- ❌ Larger angular span per pixel → reduced angular resolution
 
-**MTF (Modulation Transfer Function)**：
-镜头的光学质量指标。高 MTF → 更锐利的图像 → 更好的特征提取。
+**MTF (Modulation Transfer Function)**:
+Lens optical quality metric. High MTF → sharper images → better feature extraction.
 
 ---
 
-### 4.1.2 图像传感器 (Image Sensor)
+### 4.1.2 Image Sensor
 
-**CCD vs CMOS**：
+**CCD vs CMOS**:
 
 | | CCD | CMOS |
 |---|-----|------|
-| 噪声 | 低 | 较高 |
-| 速度 | 慢 | 快 |
-| 功耗 | 高 | 低 |
-| 成本 | 高 | 低 |
-| 当前主流 | — | ✅ 几乎所有现代SLAM相机 |
+| Noise | Low | Higher |
+| Speed | Slow | Fast |
+| Power | High | Low |
+| Cost | High | Low |
+| Current mainstream | — | ✅ Almost all modern SLAM cameras |
 
-**全局快门 vs 卷帘快门 (Global vs Rolling Shutter)**
+**Global Shutter vs Rolling Shutter**
 
-| | 全局快门 | 卷帘快门 |
+| | Global Shutter | Rolling Shutter |
 |---|----------|----------|
-| 原理 | 所有像素同时曝光 | 逐行扫描曝光 |
-| 运动模糊 | 无 | **有！（SLAM 大敌）** |
-| 成本 | 高 | 低 |
-| 主流设备 | Intel RealSense D435 | 大多数手机/网络摄像头 |
+| Principle | All pixels exposed simultaneously | Row-by-row exposure |
+| Motion Blur | None | **Yes! (SLAM's enemy)** |
+| Cost | High | Low |
+| Mainstream Devices | Intel RealSense D435 | Most phones/webcams |
 
-> **示例 2** — 卷帘快门效应量化
+> **Example 2** — Quantifying Rolling Shutter Effect
 >
-> 分辨率 1920×1080，帧率 30fps，读出时间 ~ 33ms
+> Resolution 1920×1080, 30fps, readout time ~33ms
 >
-> 每行之间时间差:
+> Time difference between rows:
 > $$33\text{ms} / 1080 \approx 30.6 \mu\text{s}$$
 >
-> 如果相机以 0.5 rad/s (≈ 30°/s) 旋转：
-> 第1行到第1080行之间的角度变化:
+> If the camera rotates at 0.5 rad/s (≈ 30°/s):
+> Angular change from row 1 to row 1080:
 > $$0.5 \times 0.033 = 0.0165\text{ rad} \approx 0.95^\circ$$
 >
-> 像素偏移（f=800）:
+> Pixel shift (f=800):
 > $$800 \times 0.0165 \approx 13\text{ px}$$
 >
-> 13 像素的偏移！投影模型
+> 13 pixels of shift! The projection model
 > $$P = K[R|t]P_w$$
-> 假设整张图同一时刻拍摄 → 严重违反假设 → 位姿漂移。
+> assumes the entire image was captured at the same instant → severe violation of assumptions → pose drift.
 
-**卷帘快门对 SLAM 的影响**：
-快速运动时，图像的每一行对应不同的相机位姿 → 投影模型失效 → 位姿估计漂移。
+**Impact of Rolling Shutter on SLAM**:
+During rapid motion, each row of the image corresponds to a different camera pose → projection model fails → pose estimation drifts.
 
-**应对**：DSO 等系统对卷帘快门进行建模和矫正。
+**Mitigation**: Systems like DSO model and correct for rolling shutter.
 
 ---
 
-### 4.1.3 曝光与 ISO
+### 4.1.3 Exposure and ISO
 
-| 参数 | 控制 | SLAM 影响 |
+| Parameter | Controls | SLAM Impact |
 |------|------|-----------|
-| **曝光时间** | 快门打开时长 | 长曝光 → 运动模糊 → 跟踪失败 |
-| **ISO** | 传感器增益 | 高ISO → 噪声增大 → 特征质量下降 |
-| **光圈** | 进光孔径 | 大光圈 → 浅景深 → 远处模糊 |
+| **Exposure Time** | Duration shutter is open | Long exposure → motion blur → tracking failure |
+| **ISO** | Sensor gain | High ISO → increased noise → degraded feature quality |
+| **Aperture** | Light intake aperture | Large aperture → shallow depth of field → blurred distant objects |
 
-> **示例 3** — 运动模糊量化
+> **Example 3** — Motion Blur Quantification
 >
-> 相机平移速度 0.2 m/s, 曝光时间 16ms (1/60s)
+> Camera translation speed 0.2 m/s, exposure time 16ms (1/60s)
 >
-> 曝光期间相机位移:
+> Camera displacement during exposure:
 > $$0.2 \times 0.016 = 0.0032\text{m} = 3.2\text{mm}$$
 >
-> 场景距离 2m, 焦距 800px (对应 ~8mm 物理焦距，传感器 6.4mm)
-> 在传感器上的模糊:
+> Scene distance 2m, focal length 800px (corresponding to ~8mm physical focal length, sensor 6.4mm)
+> Blur on sensor:
 > $$\frac{8\text{mm}}{2000\text{mm}} \times 3.2\text{mm} = 0.0128\text{mm}$$
 >
-> 像素模糊:
+> Pixel blur:
 > $$\frac{0.0128\text{mm}}{6.4\text{mm}} \times 1280 \approx 2.6\text{ px}$$
 >
-> 2-3 像素的模糊足以使角点检测失效！
+> 2-3 pixels of blur is enough to make corner detection fail!
 
-**自动曝光 (AE) 对直接法 SLAM 的致命影响**：
-直接法依赖**光度恒定假设**（同一物体在不同帧中亮度一致）。
-AE 改变了整体亮度 → 光度恒定假设被破坏 → 位姿估计失败。
+**Fatal Impact of Auto Exposure (AE) on Direct Methods**:
+Direct methods rely on the **photometric constancy assumption** (same object has consistent brightness across frames).
+AE changes the overall brightness → photometric constancy assumption is broken → pose estimation fails.
 
-**DSO 的解决方案**：光度标定
-- 事先标定相机的响应函数（非线性映射）和 Vignette（边缘渐暗）
-- 在光度误差计算中补偿这些因素
+**DSO's Solution**: Photometric Calibration
+- Pre-calibrate the camera's response function (nonlinear mapping) and vignetting (edge darkening)
+- Compensate for these factors in the photometric error computation
 
 ---
 
-### 4.1.4 分辨率
+### 4.1.4 Resolution
 
-| 分辨率 | 像素数 | SLAM 影响 |
+| Resolution | Pixel Count | SLAM Impact |
 |--------|--------|-----------|
-| VGA | 640×480 | 低计算量，适合入门 |
-| HD | 1280×720 | 常用平衡点 |
-| Full HD | 1920×1080 | 更高精度，更多特征 |
-| 4K | 3840×2160 | 极高计算量 |
+| VGA | 640×480 | Low computation, suitable for getting started |
+| HD | 1280×720 | Common sweet spot |
+| Full HD | 1920×1080 | Higher accuracy, more features |
+| 4K | 3840×2160 | Extremely high computation |
 
-> **示例 4** — 分辨率与计算量的关系
+> **Example 4** — Relationship Between Resolution and Computation
 >
-> VGA (640×480): 307,200 像素 → ORB 特征提取 ~2ms
-> HD (1280×720): 921,600 像素 → ~6ms (×3 像素，线性)
-> FHD (1920×1080): 2,073,600 像素 → ~14ms (×6.75 像素)
+> VGA (640×480): 307,200 pixels → ORB feature extraction ~2ms
+> HD (1280×720): 921,600 pixels → ~6ms (×3 pixels, linear)
+> FHD (1920×1080): 2,073,600 pixels → ~14ms (×6.75 pixels)
 >
-> 在 30fps (33ms/帧) 的预算内，FHD 用了 14ms 只在特征提取上，留给跟踪和建图的时间只有 19ms。这就是为什么多数 SLAM 用 VGA-HD。
+> Within the 30fps (33ms/frame) budget, FHD uses 14ms just on feature extraction, leaving only 19ms for tracking and mapping. This is why most SLAM systems run at VGA-HD.
 
-**分辨率与精度的权衡**：
-- 像素越多 → 特征越丰富 → 匹配更准确但计算量 O(像素数) → 分辨率加倍 = 处理时间 ×4实践：多数 SLAM 系统在 VGA-HD 之间运行
+**Resolution vs. Accuracy Trade-off**:
+- More pixels → richer features → more accurate matching
+- But computation O(pixel count) → doubling resolution = ×4 processing time
+- In practice: most SLAM systems run between VGA and HD
 
 ---
 
-## 4.2 图像处理基础
+## 4.2 Image Processing Fundamentals
 
-### 4.2.1 彩色与灰度
+### 4.2.1 Color and Grayscale
 
-**RGB → 灰度**（加权平均，模拟人眼感知）：
+**RGB → Grayscale** (weighted average, simulating human perception):
 $$\text{Gray} = 0.299R + 0.587G + 0.114B$$
 
-为什么 G 权重最高？因为人眼对绿色最敏感。
+Why is G weighted highest? Because human eyes are most sensitive to green.
 
-> **示例 5** — 像素灰度值计算
+> **Example 5** — Pixel Grayscale Value Calculation
 >
-> | 像素 | R | G | B | 灰度 | 说明 |
+> | Pixel | R | G | B | Grayscale | Note |
 > |------|---|---|---|------|------|
-> | 红色物体 | 255 | 0 | 0 |
+> | Red object | 255 | 0 | 0 |
 > $$0.299\times255 = 76$$
-> | 人眼看红色偏暗 |
-> | 绿色物体 | 0 | 255 | 0 |
+> | Human eye sees red as relatively dark |
+> | Green object | 0 | 255 | 0 |
 > $$0.587\times255 = 150$$
-> | 人眼看绿色最亮 |
-> | 蓝色物体 | 0 | 0 | 255 |
+> | Human eye sees green as brightest |
+> | Blue object | 0 | 0 | 255 |
 > $$0.114\times255 = 29$$
-> | 人眼看蓝色很暗 |
-> | 白色 | 255 | 255 | 255 |
+> | Human eye sees blue as very dark |
+> | White | 255 | 255 | 255 |
 > $$0.299\times255 + 0.587\times255 + 0.114\times255 = 255$$
 > | |
-> | 灰色 | 128 | 128 | 128 | 128 | |
+> | Gray | 128 | 128 | 128 | 128 | |
 >
-> 这就是为什么绿色通道承载了最多的亮度信息。
+> This is why the green channel carries the most luminance information.
 
-SLAM 中**为什么通常只用灰度图？**
-1. 特征提取不依赖颜色
-2. 单通道 = 3倍内存和计算节省
-3. 灰度图对光照变化更鲁棒
+**Why does SLAM typically use only grayscale images?**
+1. Feature extraction does not depend on color
+2. Single channel = 3× memory and computation savings
+3. Grayscale is more robust to lighting changes
 
-但也有例外：**语义 SLAM** 使用 RGB 进行物体识别。
+But there are exceptions: **Semantic SLAM** uses RGB for object recognition.
 
 ---
 
-### 4.2.2 高斯模糊 (Gaussian Blur)
+### 4.2.2 Gaussian Blur
 
-用于**去噪**和**构建图像金字塔**。
+Used for **denoising** and **building image pyramids**.
 
-**高斯核**（3×3 示例,
-**高斯核**
-$$\sigma=1.0$$
-**高斯核**）：
+**Gaussian Kernel** (3×3 example, $\sigma=1.0$):
 $$G(x,y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2+y^2}{2\sigma^2}}$$
 
-离散近似：
-$$\frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\\\ 2 & 4 & 2 \\\\ 1 & 2 & 1 \end{bmatrix}$$
+Discrete approximation:
+$$\frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 \end{bmatrix}$$
 
-> **示例 6** — 手算高斯核和卷积
+> **Example 6** — Hand-computing Gaussian Kernel and Convolution
 >
-> 生成
+> Generate 3×3 kernel with
 > $$\sigma=1.0$$
-> 的 3×3 核:
+> :
 >
 > $$G(-1,-1) = \frac{1}{2\pi} e^{-2/2} = \frac{e^{-1}}{2\pi} \approx 0.159 \times 0.3679 \approx 0.0585$$
 > $$G(0,-1) = \frac{1}{2\pi} e^{-1/2} = \frac{e^{-0.5}}{2\pi} \approx 0.159 \times 0.6065 \approx 0.0965$$
 > $$G(0,0) = \frac{1}{2\pi} e^{0} = \frac{1}{2\pi} \approx 0.159$$
 >
-> 归一化（除以和
+> Normalize (divide by sum
 > $$0.0585\times4 + 0.0965\times4 + 0.159 = 0.234+0.386+0.159=0.779$$
-> ）:
-> $$\text{kernel} \approx \frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\\\ 2 & 4 & 2 \\\\ 1 & 2 & 1 \end{bmatrix}$$
+> ):
+> $$\text{kernel} \approx \frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 \end{bmatrix}$$
 >
 > ---
 >
-> **示例 6b** — 卷积运算
+> **Example 6b** — Convolution Operation
 >
-> 5×5 图像:
-> $$I = \begin{bmatrix} 10 & 20 & 30 & 20 & 10 \\\\ 20 & 40 & 50 & 40 & 20 \\\\ 30 & 50 & 80 & 50 & 30 \\\\ 20 & 40 & 50 & 40 & 20 \\\\ 10 & 20 & 30 & 20 & 10 \end{bmatrix}$$
+> 5×5 image:
+> $$I = \begin{bmatrix} 10 & 20 & 30 & 20 & 10 \\ 20 & 40 & 50 & 40 & 20 \\ 30 & 50 & 80 & 50 & 30 \\ 20 & 40 & 50 & 40 & 20 \\ 10 & 20 & 30 & 20 & 10 \end{bmatrix}$$
 >
-> 对中心像素 (第3行第3列，值=80) 做卷积:
+> Convolve the center pixel (row 3, col 3, value=80):
 > $$I[2,2]_{\text{new}} = \frac{1}{16}\sum_{i=-1}^{1}\sum_{j=-1}^{1} w_{ij} \cdot I[2+i, 2+j]$$
 >
 > $$= \frac{1}{16}(1\times40 + 2\times50 + 1\times40 + 2\times50 + 4\times80 + 2\times50 + 1\times40 + 2\times50 + 1\times40)$$
 > $$= \frac{1}{16}(40+100+40+100+320+100+40+100+40) = \frac{880}{16} = 55$$
 >
-> 模糊后 80 → 55（向周围像素的均值靠拢），这就是**平滑/去噪**的效果。
+> After blurring 80 → 55 (moving toward the mean of neighboring pixels), this is the **smoothing/denoising** effect.
 
-**图像金字塔**（最核心的 SLAM 预处理）：
+**Image Pyramid** (the most essential SLAM preprocessing):
 
 ```text
-Level 0: 原始图像 (640×480)
-Level 1: 降采样 + 高斯模糊 (320×240)
-Level 2: 再降采样 (160×120)
-Level 3: 再降采样 (80×60)
+Level 0: Original image (640×480)
+Level 1: Downsampled + Gaussian blur (320×240)
+Level 2: Further downsampled (160×120)
+Level 3: Further downsampled (80×60)
 ```
 
-**为什么需要金字塔？**
-- ORB-SLAM：在每层金字塔提取 ORB 特征 → 实现**尺度不变性**
-- DSO：从粗到细 (coarse-to-fine) 优化 → 避免局部极小值
-- KLT 光流：金字塔加速收敛
+**Why is a pyramid needed?**
+- ORB-SLAM: extracts ORB features at each pyramid level → achieves **scale invariance**
+- DSO: coarse-to-fine optimization → avoids local minima
+- KLT optical flow: pyramid accelerates convergence
 
 ---
 
-### 4.2.3 阈值化 (Thresholding)
+### 4.2.3 Thresholding
 
-将灰度图转为二值图：
-$$B(x,y) = \begin{cases} 1 & I(x,y) > T \\\\ 0 & \text{otherwise} \end{cases}$$
+Convert grayscale image to binary:
+$$B(x,y) = \begin{cases} 1 & I(x,y) > T \\ 0 & \text{otherwise} \end{cases}$$
 
-> **示例 7** — 阈值化
+> **Example 7** — Thresholding
 >
-> 5×5 灰度图像的阈值化 (
+> Thresholding of a 5×5 grayscale image (
 > $$T=128$$
 > ):
 >
-> $$I = \begin{bmatrix} 50 & 200 & 150 & 80 & 255 \\\\ 30 & 180 & 90 & 120 & 100 \\\\ 200 & 250 & 130 & 60 & 40 \\\\ 100 & 90 & 70 & 180 & 200 \\\\ 0 & 255 & 160 & 140 & 110 \end{bmatrix}$$
+> $$I = \begin{bmatrix} 50 & 200 & 150 & 80 & 255 \\ 30 & 180 & 90 & 120 & 100 \\ 200 & 250 & 130 & 60 & 40 \\ 100 & 90 & 70 & 180 & 200 \\ 0 & 255 & 160 & 140 & 110 \end{bmatrix}$$
 >
-> $$B = \begin{bmatrix} 0 & 1 & 1 & 0 & 1 \\\\ 0 & 1 & 0 & 0 & 0 \\\\ 1 & 1 & 1 & 0 & 0 \\\\ 0 & 0 & 0 & 1 & 1 \\\\ 0 & 1 & 1 & 1 & 0 \end{bmatrix}$$
+> $$B = \begin{bmatrix} 0 & 1 & 1 & 0 & 1 \\ 0 & 1 & 0 & 0 & 0 \\ 1 & 1 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 & 1 \\ 0 & 1 & 1 & 1 & 0 \end{bmatrix}$$
 >
-> 这产生了一个二值掩码，可用于：
-> - 场景分割（检测地面/墙壁）
-> - 占据栅格地图（occupancy grid mapping）
-> - ORB-SLAM 用亮度阈值加速 FAST 角点检测
+> This produces a binary mask that can be used for:
+> - Scene segmentation (detecting floor/walls)
+> - Occupancy grid mapping
+> - ORB-SLAM uses brightness threshold to accelerate FAST corner detection
 
-**SLAM 中的用途**：
-- 场景分割（检测地面/墙壁）
-- 占据栅格地图（occupancy grid mapping）
-- ORB-SLAM 用亮度阈值加速 FAST 角点检测
+**Uses in SLAM**:
+- Scene segmentation (detecting floor/walls)
+- Occupancy grid mapping
+- ORB-SLAM uses brightness threshold to accelerate FAST corner detection
 
 ---
 
-### 4.2.4 边缘检测
+### 4.2.4 Edge Detection
 
-**边缘 = 图像强度变化剧烈的位置**
+**Edge = locations where image intensity changes sharply**
 
-**Sobel 算子**（一阶导数近似）：
+**Sobel Operator** (first-order derivative approximation):
 
-$$G_x = \begin{bmatrix} -1 & 0 & 1 \\\\ -2 & 0 & 2 \\\\ -1 & 0 & 1 \end{bmatrix} \quad G_y = \begin{bmatrix} -1 & -2 & -1 \\\\ 0 & 0 & 0 \\\\ 1 & 2 & 1 \end{bmatrix}$$
+$$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix} \quad G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix}$$
 
-梯度幅值:
+Gradient magnitude:
 $$M = \sqrt{G_x^2 + G_y^2}$$
-梯度方向:
+Gradient direction:
 $$\theta = \arctan(G_y / G_x)$$
 
-> **示例 8** — Sobel 梯度计算（手算）
+> **Example 8** — Sobel Gradient Calculation (by hand)
 >
-> 5×5 图像（边缘在中间）:
-> $$I = \begin{bmatrix} 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \end{bmatrix}$$
+> 5×5 image (edge in the middle):
+> $$I = \begin{bmatrix} 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \end{bmatrix}$$
 >
-> 对中心像素 (第3行第3列，值=10) 计算
-> $$G_x$$:
+> Compute $G_x$ for center pixel (row 3, col 3, value=10):
 >
 > $$G_x = (-1)\times10 + 0\times10 + 1\times200 + (-2)\times10 + 0\times10 + 2\times200 + (-1)\times10 + 0\times10 + 1\times200$$
 > $$= -10 + 0 + 200 - 20 + 0 + 400 - 10 + 0 + 200 = 760$$
 >
->
-$$G_y$$
-:
-$$(-1)\times10 + (-2)\times10 + (-1)\times10 + 0 + 0 + 0 + 1\times200 + 2\times200 + 1\times200$$
+> $G_y$:
+> $$(-1)\times10 + (-2)\times10 + (-1)\times10 + 0 + 0 + 0 + 1\times200 + 2\times200 + 1\times200$$
 > $$= -10 - 20 - 10 + 0 + 200 + 400 + 200 = 760$$
 >
-> 梯度幅值:
+> Gradient magnitude:
 > $$M = \sqrt{760^2 + 760^2} = 760\sqrt{2} \approx 1075$$
-> — 非常大！这是垂直边缘。
+> — Very large! This is a vertical edge.
 >
-> 梯度方向:
+> Gradient direction:
 > $$\theta = \arctan(760/760) = 45^\circ$$
-> （对角线方向，因为同时有X和Y方向的变化）
+> (diagonal direction, because there are changes in both X and Y)
 >
 > ---
 >
-> **示例 8b** — 平坦区域
+> **Example 8b** — Flat Region
 >
-> 对左上角像素 (第1行第1列，值=10)，邻域全为10:
+> For the top-left pixel (row 1, col 1, value=10), neighborhood all 10:
 > $$G_x = 0, \quad G_y = 0, \quad M = 0$$
 >
-> 平坦区域无梯度 → 不是边缘。
+> Flat region has no gradient → not an edge.
 
-**Canny 边缘检测**（多阶段）：
+**Canny Edge Detection** (multi-stage):
 
-步骤1: 高斯平滑 → 去噪
-步骤2: Sobel 算子求梯度幅值和方向
-步骤3: **非极大值抑制** → 只保留梯度方向上的局部最大值
-步骤4: **双阈值 + 滞后** → 强边缘连接弱边缘
+Step 1: Gaussian smoothing → denoise
+Step 2: Sobel operator to compute gradient magnitude and direction
+Step 3: **Non-maximum suppression** → keep only local maxima along gradient direction
+Step 4: **Double thresholding + hysteresis** → strong edges connect to weak edges
 
-> **示例 9** — 非极大值抑制图解
+> **Example 9** — Non-maximum Suppression Illustration
 >
-> 假设一条水平边缘的梯度幅值（沿垂直方向扫描）:
+> Suppose the gradient magnitude along a horizontal edge (scanning vertically):
 > $$[10, 25, 50, 80, 60, 30, 15]$$
 >
-> 梯度方向 = 90°（垂直），所以沿垂直方向找局部最大值:
-> 80 是局部最大（左边50，右边60）→ 保留
-> 其他 → 抑制为0
+> Gradient direction = 90° (vertical), so find local maximum along vertical direction:
+> 80 is the local maximum (50 left, 60 right) → keep
+> Others → suppress to 0
 >
-> 结果:
+> Result:
 > $$[0, 0, 0, 80, 0, 0, 0]$$
 >
-> 这一步把"粗"边缘细化为单像素宽度的"细"边缘。
+> This step thins "thick" edges down to single-pixel-width "thin" edges.
 
-**为什么边缘对 SLAM 重要？**
-- LSD-SLAM 和 DSO 用**高梯度像素**（边缘区域）做跟踪
-- 边缘比平坦区域有更多信息直接法利用边缘处的光度梯度进行优化
+**Why are edges important for SLAM?**
+- LSD-SLAM and DSO use **high-gradient pixels** (edge regions) for tracking
+- Edges carry more information than flat regions
+- Direct methods leverage photometric gradients at edges for optimization
 
 ---
 
-### 4.2.5 角点检测 (Corner Detection)
+### 4.2.5 Corner Detection
 
-**角点 = 两个方向都有大梯度变化的点**
+**Corner = point with large gradient changes in two directions**
 
-**Harris 角点检测**（1988，经典算法）：
+**Harris Corner Detection** (1988, classic algorithm):
 
-1. 计算图像梯度
-1. $$I_x, I_y$$
-2. 构造结构张量（Structure Tensor）：
-   $$M = \sum_{window} w(x,y) \begin{bmatrix} I_x^2 & I_x I_y \\\\ I_x I_y & I_y^2 \end{bmatrix}$$
-3. 计算 Harris 响应：
+1. Compute image gradients $I_x, I_y$
+2. Construct the Structure Tensor:
+   $$M = \sum_{window} w(x,y) \begin{bmatrix} I_x^2 & I_x I_y \\ I_x I_y & I_y^2 \end{bmatrix}$$
+3. Compute the Harris response:
    $$R = \det(M) - k \cdot \text{trace}(M)^2$$
-   其中
+   where
    $$k \approx 0.04$$
-   （经验值）
+   (empirical value)
 
-4. 判据：
-- $$R > 0$$
-  且大 → **角点**
-  $$R < 0$$
-  → **边缘**
-  $$|R|$$
-  小 → **平坦区域**
+4. Criteria:
+   - $R > 0$ and large → **corner**
+   - $R < 0$ → **edge**
+   - $|R|$ small → **flat region**
 
-> **示例 10** — Harris 角点手算（3×3窗口）
+> **Example 10** — Harris Corner Hand Calculation (3×3 window)
 >
-> 3×3 窗口的梯度:
-> $$I_x = \begin{bmatrix} 5 & 8 & 5 \\\\ 6 & 10 & 6 \\\\ 5 & 8 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 5 & 6 & 5 \\\\ 8 & 10 & 8 \\\\ 5 & 6 & 5 \end{bmatrix}$$
+> 3×3 window gradients:
+> $$I_x = \begin{bmatrix} 5 & 8 & 5 \\ 6 & 10 & 6 \\ 5 & 8 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 5 & 6 & 5 \\ 8 & 10 & 8 \\ 5 & 6 & 5 \end{bmatrix}$$
 >
-> （这是一个角点！X和Y方向都有大梯度）
+> (This is a corner! Large gradients in both X and Y)
 >
-> **Step 1**: 计算 M 的元素
+> **Step 1**: Compute M elements
 > $$\sum I_x^2 = 5^2+8^2+5^2+6^2+10^2+6^2+5^2+8^2+5^2 = 25+64+25+36+100+36+25+64+25 = 400$$
 > $$\sum I_y^2 = 5^2+6^2+5^2+8^2+10^2+8^2+5^2+6^2+5^2 = 25+36+25+64+100+64+25+36+25 = 400$$
 > $$\sum I_x I_y = 5\times5+8\times6+5\times5 + 6\times8+10\times10+6\times8 + 5\times5+8\times6+5\times5$$
 > $$= 25+48+25+48+100+48+25+48+25 = 392$$
 >
-> **Step 2**: 构造 M
-> $$M = \begin{bmatrix} 400 & 392 \\\\ 392 & 400 \end{bmatrix}$$
+> **Step 2**: Construct M
+> $$M = \begin{bmatrix} 400 & 392 \\ 392 & 400 \end{bmatrix}$$
 >
-> **Step 3**: 计算 Harris 响应
+> **Step 3**: Compute Harris response
 > $$\det(M) = 400\times400 - 392\times392 = 160000 - 153664 = 6336$$
 > $$\text{trace}(M) = 400 + 400 = 800$$
 > $$R = 6336 - 0.04 \times 800^2 = 6336 - 0.04\times640000 = 6336 - 25600 = -19264$$
 >
-> $$R < 0$$
-> → **边缘**！虽然两个方向都有梯度，但
-> $$I_x$$
-> 和
-> $$I_y$$
-> 高度相关（几乎成比例），所以实际上是边缘。
+> $R < 0$ → **edge**! Although there are gradients in both directions,
+> $I_x$ and $I_y$ are highly correlated (nearly proportional), so it's actually an edge.
 >
 > ---
 >
-> **示例 10b** — 真正的角点
+> **Example 10b** — A True Corner
 >
-> $$I_x = \begin{bmatrix} 5 & 0 & 5 \\\\ 0 & 10 & 0 \\\\ 5 & 0 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 0 & 5 & 0 \\\\ 5 & 10 & 5 \\\\ 0 & 5 & 0 \end{bmatrix}$$
+> $$I_x = \begin{bmatrix} 5 & 0 & 5 \\ 0 & 10 & 0 \\ 5 & 0 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 0 & 5 & 0 \\ 5 & 10 & 5 \\ 0 & 5 & 0 \end{bmatrix}$$
 >
 > $$\sum I_x^2 = 25+0+25+0+100+0+25+0+25 = 200$$
 > $$\sum I_y^2 = 0+25+0+25+100+25+0+25+0 = 200$$
 > $$\sum I_x I_y = 0+0+0+0+0+0+0+0+0 = 0$$
 >
-> $$M = \begin{bmatrix} 200 & 0 \\\\ 0 & 200 \end{bmatrix}$$
+> $$M = \begin{bmatrix} 200 & 0 \\ 0 & 200 \end{bmatrix}$$
 > $$\det(M) = 40000, \quad \text{trace}(M) = 400$$
 > $$R = 40000 - 0.04\times160000 = 40000 - 6400 = 33600$$
 >
-> $$R = 33600$$
-> 大正值 → **角点**！
-> $$I_x$$
-> 和
-> $$I_y$$
-> 不相关（
-> $$I_x I_y = 0$$
-> ），两个方向独立。
+> $R = 33600$ large positive → **corner**!
+> $I_x$ and $I_y$ are uncorrelated ($I_x I_y = 0$), both directions independent.
 
-**M 矩阵的两个特征值告诉我们什么？**
+**What do the two eigenvalues of the M matrix tell us?**
 
-- $$\lambda_1, \lambda_2$$
-  都大 → 角点
-  $$\lambda_1 \gg \lambda_2$$
-  → 垂直边缘
-  $$\lambda_2 \gg \lambda_1$$
-  → 水平边缘
-  都小 → 平坦
+- $\lambda_1, \lambda_2$ both large → corner
+- $\lambda_1 \gg \lambda_2$ → vertical edge
+- $\lambda_2 \gg \lambda_1$ → horizontal edge
+- Both small → flat
 
-**Harris 的局限性** → 被 **FAST** 和 **SIFT** 替代（见 Level 2）。
+**Harris limitations** → superseded by **FAST** and **SIFT** (see Level 2).
 
 ---
 
-### 4.2.6 立体视觉与深度
+### 4.2.6 Stereo Vision and Depth
 
-**双目视觉原理**：
+**Binocular Vision Principle**:
 
-两台相机水平放置，基线距离
-$$B$$
+Two cameras placed horizontally, baseline distance $B$
 
-
-同一 3D 点在左右图像中的水平像素差 = **视差 (disparity)**
+Horizontal pixel difference of the same 3D point in left and right images = **disparity**
 $$d = u_L - u_R$$
-
 
 $$Z = \frac{f \cdot B}{d}$$
 
-**关键关系**：
-- 视差
-  $$d$$
-  与深度
-  $$Z$$
-  成**反比**
-- 基线
-  $$B$$
-  越大 → 可测量的最远距离越大
-- 焦距
-  $$f$$
-  越长 → 深度分辨率越高
+**Key Relationships**:
+- Disparity $d$ is **inversely proportional** to depth $Z$
+- Larger baseline $B$ → larger maximum measurable distance
+- Longer focal length $f$ → higher depth resolution
 
-> **示例 11** — 双目深度计算
+> **Example 11** — Binocular Depth Calculation
 >
-> 相机参数:
+> Camera parameters:
 > $$f_x = 800$$
-> , 基线
+> , baseline
 > $$B = 0.12\text{m}$$
-> (12cm，类似人眼)
+> (12cm, similar to human eyes)
 >
-> 3D 点
+> Disparity for a 3D point
 > $$P = [0, 0, 3]^\top$$
-> （正前方3米）的视差:
+> (3 meters straight ahead):
 > $$d = \frac{f \cdot B}{Z} = \frac{800 \times 0.12}{3} = \frac{96}{3} = 32\text{ px}$$
 >
-> 左图像素
+> Left image pixel
 > $$u_L = 320$$
-> （主点），右图像素
+> (principal point), right image pixel
 > $$u_R = 320 - 32 = 288$$
 >
-> 验证:
+> Verify:
 > $$Z = \frac{800 \times 0.12}{32} = \frac{96}{32} = 3\text{ m}$$
 > ✓
 >
 > ---
 >
-> **示例 11b** — 视差与深度的反比关系
+> **Example 11b** — Inverse Relationship Between Disparity and Depth
 >
-> | 深度 Z (m) | 视差 d (px) | 关系 |
+> | Depth Z (m) | Disparity d (px) | Relationship |
 > |-----------|------------|------|
 > | 1 | 96 |
-$$d \propto 1/Z$$
-|
+> $$d \propto 1/Z$$
+> |
 > | 2 | 48 | |
 > | 3 | 32 | |
 > | 6 | 16 | |
 > | 12 | 8 | |
-> | ∞ | 0 | 无穷远点无视差 |
+> | ∞ | 0 | Point at infinity has zero disparity |
 >
-> 可以看到，从 1m 到 2m 视差变化了 48px（很容易区分），但从 6m 到 12m 视差只变化了 8px（难以区分）。这就是**远处深度估计不准**的根本原因。
+> As can be seen, from 1m to 2m disparity changes by 48px (easy to distinguish), but from 6m to 12m disparity only changes by 8px (hard to distinguish). This is the fundamental reason why **distant depth estimation is inaccurate**.
 
-> **示例 11c** — 亚像素精度的影响
+> **Example 11c** — Impact of Sub-pixel Accuracy
 >
-> 假设视差估计精度为 0.5px:
+> Assuming disparity estimation accuracy of 0.5px:
 >
-> 在 Z=3m: 视差 32px, 不确定性
+> At Z=3m: disparity 32px, uncertainty
 > $$\Delta Z = \frac{Z^2}{fB}\Delta d = \frac{9}{96}\times0.5 \approx 0.047\text{m}$$
-> (4.7cm) — 还好
+> (4.7cm) — acceptable
 >
-> 在 Z=10m: 视差 9.6px, 不确定性
+> At Z=10m: disparity 9.6px, uncertainty
 > $$\Delta Z = \frac{100}{96}\times0.5 \approx 0.52\text{m}$$
-> (52cm) — 很差！
+> (52cm) — very poor!
 >
-> 这是双目视觉的根本局限：**不确定性随深度平方增长**。
+> This is the fundamental limitation of binocular vision: **uncertainty grows with the square of depth**.
 
-**RGB-D 相机**：
-不是靠双目视差，而是主动投射图案：
-- **结构光 (Structured Light)**：投射已知图案 → 变形 → 深度
-- **ToF (Time of Flight)**：发射红外脉冲 → 测量往返时间 → 深度
-- **主动立体 (Active Stereo)**：投射红外纹理 + 双目匹配 (如 RealSense D435)
+**RGB-D Cameras**:
+Instead of relying on binocular disparity, they actively project patterns:
+- **Structured Light**: project a known pattern → deformation → depth
+- **ToF (Time of Flight)**: emit infrared pulses → measure round-trip time → depth
+- **Active Stereo**: project infrared texture + binocular matching (e.g., RealSense D435)
 
-**RGB-D 的深度噪声模型**（来自 KinectFusion 论文）：
+**RGB-D Depth Noise Model** (from the KinectFusion paper):
 
 $$\sigma_z = \frac{Z^2}{f B} \sigma_d$$
 
-深度噪声与深度平方成正比 → **远处的点非常不可靠**。
+Depth noise is proportional to the square of depth → **distant points are very unreliable**.
 
-> **示例 12** — RGB-D 深度噪声
+> **Example 12** — RGB-D Depth Noise
 >
-> Kinect v1 参数:
+> Kinect v1 parameters:
 > $$f=580$$,
-
+>
 > $$B=0.075\text{m}$$,
-
+>
 > $$\sigma_d = 0.5\text{px}$$
 >
-> | 深度 Z (m) | 噪声
+> | Depth Z (m) | Noise
 > $$\sigma_z$$
-> (m) | 测量
+> (m) | Measurement
 > $$Z \pm 2\sigma$$
 > (95% CI) |
 > |-----------|-------------------|------|
 > | 1 |
-$$\frac{1}{43.5}\times0.5 = 0.011$$
-|
-$$1.0 \pm 0.022$$
-m |
+> $$\frac{1}{43.5}\times0.5 = 0.011$$
+> |
+> $$1.0 \pm 0.022$$
+> m |
 > | 3 |
-$$\frac{9}{43.5}\times0.5 = 0.103$$
-|
-$$3.0 \pm 0.207$$
-m |
+> $$\frac{9}{43.5}\times0.5 = 0.103$$
+> |
+> $$3.0 \pm 0.207$$
+> m |
 > | 5 |
-$$\frac{25}{43.5}\times0.5 = 0.287$$
-|
-$$5.0 \pm 0.574$$
-m |
+> $$\frac{25}{43.5}\times0.5 = 0.287$$
+> |
+> $$5.0 \pm 0.574$$
+> m |
 >
-> 5米处的不确定性已经 ~0.6米！这就是为什么 RGB-D SLAM 的有效范围通常 < 5m。
+> At 5 meters, the uncertainty is already ~0.6m! This is why the effective range of RGB-D SLAM is typically < 5m.
 
 ---
 
-## 📝 自检清单
+## 📝 Self-Check Checklist
 
-- [ ] 为什么直接法 SLAM 需要光度标定？
-- [ ] 卷帘快门为什么影响 SLAM？哪些系统做了建模？
-- [ ] 图像金字塔在 ORB-SLAM 和 DSO 中有什么不同用途？
-- [ ] Harris 角点判据
+- [ ] Why does direct method SLAM need photometric calibration?
+- [ ] Why does rolling shutter affect SLAM? Which systems model it?
+- [ ] What are the different uses of image pyramids in ORB-SLAM vs DSO?
+- [ ] What is the intuition behind the Harris corner criterion
   $$R = \det(M) - k\cdot\text{trace}(M)^2$$
-  的直觉？
-- [ ] 双目视差公式
+  ?
+- [ ] In the binocular disparity formula
   $$Z = fB/d$$
-  中，为什么基线 B 越大深度越准？
-- [ ] Canny 比 Sobel 多了哪两个关键步骤？
+  , why does a larger baseline B give more accurate depth?
+- [ ] What are the two key steps Canny adds beyond Sobel?
 
 ---
 
-> **下一步**: 完成 `exercises/exercise_04_image_processing.py` 来动手实现这些图像处理算法。
-
+> **Next step**: Complete `exercises/exercise_04_image_processing.py` to implement these image processing algorithms hands-on.

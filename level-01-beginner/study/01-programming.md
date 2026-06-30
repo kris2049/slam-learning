@@ -1,118 +1,118 @@
-# 模块1: SLAM 编程基础
+# Module 1: SLAM Programming Fundamentals
 
-> 覆盖 visual-slam-roadmap Level 1 的「Programming」和后续各级的编程需求。
-> 重点：不要求精通 C++，但要知道 SLAM 系统为什么用 C++，以及如何用 Python 学习原理。
+> Covers "Programming" from visual-slam-roadmap Level 1 and programming needs for subsequent levels.
+> Key point: You don't need to master C++, but you should know why SLAM systems use C++ and how to learn the principles with Python.
 
 ---
 
-## 1.1 为什么 SLAM 主要用 C++？
+## 1.1 Why Does SLAM Mainly Use C++?
 
-| 原因 | 说明 |
-|------|------|
-| **实时性** | SLAM 需要 30+ FPS，C++ 接近裸机性能 |
-| **内存控制** | 手动管理内存，避免 GC 暂停 |
-| **矩阵运算** | Eigen 库提供 SIMD 加速的向量化运算 |
-| **GPU 加速** | CUDA 直接操作 GPU 内存（TSDF 融合等） |
-| **嵌入式部署** | 机器人/无人机上跑 ARM 芯片，只有 C++ |
+| Reason | Explanation |
+|--------|-------------|
+| **Real-time** | SLAM requires 30+ FPS; C++ delivers near-bare-metal performance |
+| **Memory control** | Manual memory management avoids GC pauses |
+| **Matrix operations** | Eigen library provides SIMD-accelerated vectorized operations |
+| **GPU acceleration** | CUDA directly accesses GPU memory (TSDF fusion, etc.) |
+| **Embedded deployment** | Robots/drones run on ARM chips — C++ only |
 
-**但本学习课程用 Python！**
+**But this course uses Python!**
 
-原因：
-1. 学习 SLAM **原理**不需要 C++ 的性能
-2. Python 的 numpy/scipy 是 Eigen 的 Python 等效
-3. 可视化、调试、实验修改速度远快于 C++
-4. 理解原理后，迁移到 C++ 只是重写 API 调用
+Reasons:
+1. Learning SLAM **principles** does not require C++ performance
+2. Python's numpy/scipy is the Python equivalent of Eigen
+3. Visualization, debugging, and experimentation are much faster than C++
+4. Once you understand the principles, migrating to C++ is just rewriting API calls
 
-**关键 Python → C++ 对应**：
+**Key Python → C++ Mapping**:
 
-| Python | C++ (Eigen) | 用途 |
-|--------|-------------|------|
-| `np.array([[1,2],[3,4]])` | `Matrix2d m; m << 1,2,3,4;` | 矩阵 |
+| Python | C++ (Eigen) | Purpose |
+|--------|-------------|---------|
+| `np.array([[1,2],[3,4]])` | `Matrix2d m; m << 1,2,3,4;` | Matrix |
 | `np.linalg.svd(A)` | `JacobiSVD<MatrixXd> svd(A)` | SVD |
-| `np.linalg.inv(A)` | `A.inverse()` | 求逆 |
-| `A @ B` | `A * B` | 矩阵乘法 |
-| `np.linalg.norm(v)` | `v.norm()` | 向量模长 |
+| `np.linalg.inv(A)` | `A.inverse()` | Inversion |
+| `A @ B` | `A * B` | Matrix multiplication |
+| `np.linalg.norm(v)` | `v.norm()` | Vector norm |
 
 ---
 
-## 1.2 Python 环境准备
+## 1.2 Python Environment Setup
 
 ```bash
-# 必需库
+# Required libraries
 pip install numpy scipy matplotlib
 
-# 后续会用到的 (Level 2+)
-pip install opencv-python    # 真正的 SIFT/ORB 等特征
-pip install scikit-learn     # K-means 等聚类
-pip install networkx          # 图可视化
+# Used later (Level 2+)
+pip install opencv-python    # Real SIFT/ORB features
+pip install scikit-learn     # K-means clustering
+pip install networkx          # Graph visualization
 ```
 
-**学习期间的代码规范**：
-- 所有练习使用 `numpy` 而非列表（习惯向量化思维）
-- 用 `np.linalg` 做矩阵分解（不要自己写 LU/SVD）
-- 画图用 `matplotlib`（理解几何关系的关键）
+**Coding conventions during learning**:
+- Use `numpy` for all exercises, not lists (build vectorized thinking habits)
+- Use `np.linalg` for matrix decomposition (don't write your own LU/SVD)
+- Use `matplotlib` for plotting (key to understanding geometric relationships)
 
 ---
 
-## 1.3 NumPy 实战示例 — SLAM 中最常用的操作
+## 1.3 NumPy Hands-On Examples — Most Common SLAM Operations
 
-### 1.3.1 向量和矩阵基本操作
+### 1.3.1 Basic Vector and Matrix Operations
 
 ```python
 import numpy as np
 
-# === 向量 ===
-v = np.array([1, 2, 3])           # 创建向量
-norm = np.linalg.norm(v)          # L2 模长 = sqrt(14) ≈ 3.742
-v_norm = v / norm                  # 归一化 = [0.267, 0.535, 0.802]
+# === Vectors ===
+v = np.array([1, 2, 3])           # Create a vector
+norm = np.linalg.norm(v)          # L2 norm = sqrt(14) ≈ 3.742
+v_norm = v / norm                  # Normalize = [0.267, 0.535, 0.802]
 
-# === 点积和叉积 ===
+# === Dot product and cross product ===
 a = np.array([1, 2, 3])
 b = np.array([4, 5, 6])
-dot = np.dot(a, b)                # 点积 = 32
-dot = a @ b                       # 等价写法
-cross = np.cross(a, b)            # 叉积 = [-3, 6, -3]
-# 验证: cross 垂直于 a 和 b
+dot = np.dot(a, b)                # Dot product = 32
+dot = a @ b                       # Equivalent syntax
+cross = np.cross(a, b)            # Cross product = [-3, 6, -3]
+# Verify: cross is perpendicular to a and b
 assert abs(np.dot(cross, a)) < 1e-10
 assert abs(np.dot(cross, b)) < 1e-10
 
-# === 矩阵乘法 ===
+# === Matrix multiplication ===
 A = np.array([[1, 2], [3, 4]])
 B = np.array([[5, 6], [7, 8]])
 C = A @ B                         # = [[19, 22], [43, 50]]
-C = np.matmul(A, B)               # 等价写法
+C = np.matmul(A, B)               # Equivalent syntax
 
-# === 转置 ===
+# === Transpose ===
 A_T = A.T                          # [[1, 3], [2, 4]]
 ```
 
-> **示例 1** — 验证旋转矩阵的正交性
+> **Example 1** — Verify orthogonality of a rotation matrix
 >
 > ```python
 > import numpy as np
 >
-> theta = np.radians(30)  # 30度转弧度
+> theta = np.radians(30)  # 30 degrees to radians
 > R = np.array([
 >     [np.cos(theta), -np.sin(theta), 0],
 >     [np.sin(theta),  np.cos(theta), 0],
 >     [0,              0,             1]
 > ])
 >
-> # 验证 R^T R = I
+> # Verify R^T R = I
 > I_approx = R.T @ R
 > print(I_approx)
 > # [[1. 0. 0.]
 > #  [0. 1. 0.]
 > #  [0. 0. 1.]]
 >
-> # 验证 det(R) = 1
+> # Verify det(R) = 1
 > print(np.linalg.det(R))  # 1.0
 >
-> # 验证逆等于转置
+> # Verify inverse equals transpose
 > print(np.allclose(np.linalg.inv(R), R.T))  # True
 > ```
 
-### 1.3.2 矩阵分解
+### 1.3.2 Matrix Decomposition
 
 ```python
 # === SVD ===
@@ -121,30 +121,30 @@ U, S, Vt = np.linalg.svd(A)
 # U = [[ 0.707,  0.707],   S = [4, 2],
 #      [ 0.707, -0.707]]    Vt = [[0.707, 0.707],
 #                                  [0.707, -0.707]]
-A_recon = U @ np.diag(S) @ Vt   # 重构 = A
+A_recon = U @ np.diag(S) @ Vt   # Reconstruction = A
 
-# SLAM 核心用法: 求 Ax=0 的解 (八点法)
-# 解 = Vt 的最后一行 (最小奇异值对应)
-F_vec = Vt[-1]                   # 1×9 向量
-F = F_vec.reshape(3, 3)          # 基础矩阵
+# Core SLAM usage: solve Ax=0 (8-point algorithm)
+# Solution = last row of Vt (smallest singular value)
+F_vec = Vt[-1]                   # 1×9 vector
+F = F_vec.reshape(3, 3)          # Fundamental matrix
 
-# === 特征值分解 ===
+# === Eigenvalue decomposition ===
 eigenvalues, eigenvectors = np.linalg.eig(A)
 # eigenvalues = [4, 2]
-# eigenvectors[:,0] ≈ [0.707, 0.707] (对应 λ=4)
+# eigenvectors[:,0] ≈ [0.707, 0.707] (corresponds to λ=4)
 
-# === QR 分解 ===
+# === QR decomposition ===
 Q, R = np.linalg.qr(A)
 # Q ≈ [[-0.949, -0.316],  R ≈ [[-3.162, -2.530],
 #      [-0.316,  0.949]]        [ 0.000,  1.265]]
 ```
 
-> **示例 2** — 用 SVD 求解八点法（完整流程）
+> **Example 2** — Use SVD for the 8-point algorithm (complete workflow)
 >
 > ```python
 > import numpy as np
 >
-> # 8 对匹配点的像素坐标
+> # 8 pairs of matched pixel coordinates
 > pts1 = np.array([
 >     [400, 300], [500, 300], [300, 400], [500, 500],
 >     [350, 250], [450, 350], [250, 450], [550, 450]
@@ -154,60 +154,60 @@ Q, R = np.linalg.qr(A)
 >     [330, 250], [430, 350], [230, 450], [530, 450]
 > ])
 >
-> # 构造 A 矩阵 (8×9)
+> # Construct A matrix (8×9)
 > A = np.zeros((8, 9))
 > for i in range(8):
 >     u1, v1 = pts1[i]
 >     u2, v2 = pts2[i]
 >     A[i] = [u1*u2, v1*u2, u2, u1*v2, v1*v2, v2, u1, v1, 1]
 >
-> # SVD 求最小特征向量
+> # SVD to find minimum eigenvector
 > _, _, Vt = np.linalg.svd(A)
 > F = Vt[-1].reshape(3, 3)
 >
-> # 强制 rank(F) = 2
+> # Enforce rank(F) = 2
 > U, S, Vt = np.linalg.svd(F)
 > S[2] = 0
 > F_rank2 = U @ np.diag(S) @ Vt
 >
 > print("F =", F_rank2)
-> # 验证: 对每对点 p2^T F p1 ≈ 0
+> # Verify: for each pair, p2^T F p1 ≈ 0
 > for i in range(8):
 >     p1 = np.append(pts1[i], 1)
 >     p2 = np.append(pts2[i], 1)
 >     epipolar_error = p2 @ F_rank2 @ p1
->     print(f"点对{i}: 对极误差 = {epipolar_error:.6f}")
+>     print(f"Pair {i}: epipolar error = {epipolar_error:.6f}")
 > ```
 
-### 1.3.3 齐次坐标操作
+### 1.3.3 Homogeneous Coordinate Operations
 
 ```python
-# === 世界坐标 → 相机坐标 → 像素 ===
-P_world = np.array([2, 1.5, 10, 1])   # 齐次坐标
+# === World coordinates → Camera coordinates → Pixel ===
+P_world = np.array([2, 1.5, 10, 1])   # Homogeneous coordinates
 
-# 外参: 相机在原点
-T_cw = np.eye(4)                        # 世界→相机
+# Extrinsics: camera at origin
+T_cw = np.eye(4)                        # World → Camera
 
-# 内参
+# Intrinsics
 fx, fy, cx, cy = 800, 800, 640, 480
 K = np.array([[fx, 0, cx],
               [0, fy, cy],
               [0,  0,  1]])
 
-# 投影
-P_cam = T_cw @ P_world                  # 相机坐标 [2, 1.5, 10, 1]
-x_n = P_cam[:2] / P_cam[2]              # 归一化 [0.2, 0.15]
-pixel = K @ np.array([x_n[0], x_n[1], 1])  # 像素 [800, 600]
+# Projection
+P_cam = T_cw @ P_world                  # Camera coords [2, 1.5, 10, 1]
+x_n = P_cam[:2] / P_cam[2]              # Normalized [0.2, 0.15]
+pixel = K @ np.array([x_n[0], x_n[1], 1])  # Pixel [800, 600]
 
-print(f"世界点 {P_world[:3]} → 像素 ({pixel[0]:.0f}, {pixel[1]:.0f})")
+print(f"World point {P_world[:3]} → Pixel ({pixel[0]:.0f}, {pixel[1]:.0f})")
 ```
 
-> **示例 3** — 连续帧的位姿合成
+> **Example 3** — Pose composition across consecutive frames
 >
 > ```python
 > import numpy as np
 >
-> # 帧1 → 帧2: 绕Z轴旋转 30°, 平移 [0.5, 0, 0]
+> # Frame 1 → Frame 2: rotate 30° around Z, translate [0.5, 0, 0]
 > theta = np.radians(30)
 > R12 = np.array([
 >     [np.cos(theta), -np.sin(theta), 0],
@@ -219,7 +219,7 @@ print(f"世界点 {P_world[:3]} → 像素 ({pixel[0]:.0f}, {pixel[1]:.0f})")
 > T12[:3, :3] = R12
 > T12[:3, 3] = t12
 >
-> # 帧2 → 帧3: 同样旋转, 平移 [0, 0.3, 0]
+> # Frame 2 → Frame 3: same rotation, translate [0, 0.3, 0]
 > theta2 = np.radians(30)
 > R23 = np.array([
 >     [np.cos(theta2), -np.sin(theta2), 0],
@@ -231,75 +231,75 @@ print(f"世界点 {P_world[:3]} → 像素 ({pixel[0]:.0f}, {pixel[1]:.0f})")
 > T23[:3, :3] = R23
 > T23[:3, 3] = t23
 >
-> # 合成: 帧1 → 帧3
+> # Compose: Frame 1 → Frame 3
 > T13 = T12 @ T23
-> print("从帧1到帧3的变换 T13 =")
+> print("Transform from frame 1 to frame 3, T13 =")
 > print(T13)
-> # 旋转 = 60° 绕Z (30+30)
-> # 平移 ≈ [0.5, 0.3, 0]
+> # Rotation = 60° around Z (30+30)
+> # Translation ≈ [0.5, 0.3, 0]
 > ```
 
-### 1.3.4 概率相关
+### 1.3.4 Probability-Related Operations
 
 ```python
 from scipy.stats import multivariate_normal
 
-# === 一维高斯 ===
-mu, sigma = 5.0, 0.1  # 深度 5.0m ± 0.1m
-# 在 x=5.05 处的概率密度
+# === 1D Gaussian ===
+mu, sigma = 5.0, 0.1  # Depth 5.0m ± 0.1m
+# Probability density at x=5.05
 from scipy.stats import norm
 pdf_val = norm.pdf(5.05, loc=mu, scale=sigma)
-# = 3.52 (如数学模块示例17)
+# = 3.52 (see Example 17 in the math module)
 
-# === 多元高斯: 二维位姿不确定性 ===
-mu = np.array([2.0, 3.0])               # 估计位姿 (x,y)
-Sigma = np.array([[0.04, 0.01],          # 协方差矩阵
+# === Multivariate Gaussian: 2D pose uncertainty ===
+mu = np.array([2.0, 3.0])               # Estimated pose (x, y)
+Sigma = np.array([[0.04, 0.01],          # Covariance matrix
                   [0.01, 0.09]])
 rv = multivariate_normal(mu, Sigma)
-# 在 (1.8, 2.7) 处的概率密度
+# Probability density at (1.8, 2.7)
 pdf = rv.pdf([1.8, 2.7])
 ```
 
 ---
 
-## 1.4 Bash/Linux 基础
+## 1.4 Bash/Linux Basics
 
-SLAM 开发和部署几乎全在 Linux 上：
+SLAM development and deployment is almost entirely on Linux:
 
 ```bash
-# 编译 C++ SLAM 系统
+# Build a C++ SLAM system
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
 
-# 运行
+# Run
 ./bin/orb_slam_rgbd Vocabulary/ORBvoc.txt config.yaml
 
-# 下载数据集
+# Download a dataset
 wget https://example.com/sequence.zip
 
-# 查看 GPU 使用
+# Check GPU usage
 nvidia-smi
 
-# ROS 启动
+# ROS launch
 roslaunch orb_slam3 euroc.launch
 ```
 
-学习期间用不到，但要知道这些是最终目标。
+You won't need these during the learning phase, but know they are the end goal.
 
 ---
 
-## 1.5 C++ 核心概念速览
+## 1.5 C++ Core Concepts Overview
 
-如果你之后要读 ORB-SLAM 源码，需要理解这些 C++ 特性：
+If you later read the ORB-SLAM source code, you'll need to understand these C++ features:
 
-### 指针与引用
+### Pointers and References
 ```cpp
-cv::Mat* pImg = &image;    // 指针：指向内存地址
-cv::Mat& refImg = image;   // 引用：别名，更安全
+cv::Mat* pImg = &image;    // Pointer: points to a memory address
+cv::Mat& refImg = image;   // Reference: alias, safer
 ```
 
-### 面向对象（SLAM 系统的组织方式）
+### Object-Oriented Programming (how SLAM systems are organized)
 ```cpp
 class Tracking {
 public:
@@ -310,19 +310,19 @@ private:
 };
 ```
 
-SLAM 系统 = 多个类协作：
-- `Tracking` 类处理每帧的位姿估计
-- `LocalMapping` 类管理关键帧和局部 BA
-- `LoopClosing` 类检测回环
+SLAM system = multiple collaborating classes:
+- `Tracking` class handles per-frame pose estimation
+- `LocalMapping` class manages keyframes and local BA
+- `LoopClosing` class detects loop closures
 
-### 现代 C++ 特性
+### Modern C++ Features
 ```cpp
-auto ptr = std::make_shared<MapPoint>(pos);  // 智能指针（自动释放）
-std::vector<MapPoint*> vpPoints;             // STL 容器
-std::mutex mMutexMap;                        // 多线程互斥锁
+auto ptr = std::make_shared<MapPoint>(pos);  // Smart pointer (automatic release)
+std::vector<MapPoint*> vpPoints;             // STL container
+std::mutex mMutexMap;                        // Multithreading mutex
 ```
 
-### CMake（SLAM 项目的构建系统）
+### CMake (SLAM project build system)
 ```cmake
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
@@ -332,14 +332,14 @@ target_link_libraries(my_slam ${OpenCV_LIBS} Eigen3::Eigen)
 
 ---
 
-## 1.6 编程学习建议
+## 1.6 Programming Learning Advice
 
-1. **Level 1-3 全用 Python**：理解原理，快速迭代
-2. **Level 3 后期读 ORB-SLAM 源码**：对照 Python 理解，只看核心流程
-3. **Level 5+ 学 Eigen + Ceres**：如果要做研究/开发
+1. **Levels 1-3: use Python exclusively** — understand the principles, iterate quickly
+2. **Late Level 3: read ORB-SLAM source** — cross-reference with Python, focus on core flow
+3. **Level 5+: learn Eigen + Ceres** — if you plan to do research/development
 
-不需要现在就学 C++。当你能用 Python 写出一个简化版 SLAM 系统后，C++ 只是另一个工具。
+You don't need to learn C++ right now. Once you can write a simplified SLAM system in Python, C++ is just another tool.
 
 ---
 
-> **下一步**: 直接开始学数学和几何模块，编程能力会在练习中自然提升。
+> **Next**: Dive straight into the math and geometry modules — programming skills will improve naturally through the exercises.

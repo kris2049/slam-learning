@@ -1,371 +1,375 @@
-# 模块2: SLAM 所需的数学基础
+# Module 2: Mathematical Foundations Required for SLAM
 
-> 本模块覆盖 visual-slam-roadmap Level 1 中「Mathematics」的全部知识点。
-> 目标是让你能看懂 SLAM 论文中的所有数学公式。
-> 每个公式都配有**完整的数值计算示例**。
+> This module covers all knowledge points of "Mathematics" in visual-slam-roadmap Level 1.
+> The goal is to enable you to understand all mathematical formulas in SLAM papers.
+> Each formula is accompanied by a **complete numerical calculation example**.
 
 ---
 
-## 2.1 线性代数 — SLAM 的骨架
+## 2.1 Linear Algebra — The Backbone of SLAM
 
-SLAM 中一切都在**向量空间**中进行：3D 点坐标、相机速度、平移向量都是向量；旋转、变换都是矩阵。
+In SLAM, everything takes place in **vector space**: 3D point coordinates, camera velocity, and translation vectors are all vectors; rotations and transformations are matrices.
 
-### 2.1.1 向量 (Vector)
+### 2.1.1 Vector
 
-物理含义：空间中的一个点或方向。
+Physical meaning: a point or direction in space.
 
 ```text
-a = [3, 0, 0]ᵀ    # 沿X轴的方向 (模长为3)
-b = [0, 4, 0]ᵀ    # 沿Y轴
+a = [3, 0, 0]ᵀ    # direction along X-axis (magnitude = 3)
+b = [0, 4, 0]ᵀ    # direction along Y-axis
 ```
 
-#### 向量模长 (L2 Norm)
+#### Vector Magnitude (L2 Norm)
 
 $$\|a\| = \sqrt{a_1^2 + a_2^2 + a_3^2}$$
 
-> **示例 1** — 计算向量模长
+> **Example 1** — Computing vector magnitude
 >
-> 给定
+> Given
 > $$a = [3, 0, 0]^\top$$:
 > $$\|a\| = \sqrt{3^2 + 0^2 + 0^2} = \sqrt{9} = 3$$
 >
-> 给定
+> Given
 > $$v = [1, 2, 2]^\top$$:
 > $$\|v\| = \sqrt{1^2 + 2^2 + 2^2} = \sqrt{1 + 4 + 4} = \sqrt{9} = 3$$
 >
-> 在 SLAM 中，两个 3D 点
+> In SLAM, the Euclidean distance between two 3D points
 > $$P_1=[1,2,3]^\top$$,
 > $$P_2=[4,6,3]^\top$$
-> 之间的欧氏距离:
+> is:
 > $$\|P_2 - P_1\| = \|[3, 4, 0]^\top\| = \sqrt{9 + 16 + 0} = \sqrt{25} = 5$$
 
-#### 点积 (Dot Product)
+#### Dot Product
 
 $$a \cdot b = a^\top b = a_1b_1 + a_2b_2 + a_3b_3$$
 
-几何意义：
+Geometric meaning:
 $$a \cdot b = \| a \| \cdot \| b \| \cdot \cos\theta$$
 
-> **示例 2** — 点积与夹角计算
+> **Example 2** — Dot product and angle calculation
 >
 >
-$$a = [1, 2, 3]^\top$$
-,
-$$b = [4, -5, 6]^\top$$
+> $$a = [1, 2, 3]^\top$$
+> ,
+> $$b = [4, -5, 6]^\top$$
 >
 > $$a \cdot b = 1\times4 + 2\times(-5) + 3\times6 = 4 - 10 + 18 = 12$$
 >
-> 模长:
+> Magnitudes:
 > $$\|a\| = \sqrt{1+4+9} = \sqrt{14} \approx 3.742$$,
 > $$\|b\| = \sqrt{16+25+36} = \sqrt{77} \approx 8.775$$
 >
-> 夹角:
+> Angle:
 > $$\cos\theta = \frac{a \cdot b}{\|a\|\|b\|} = \frac{12}{3.742 \times 8.775} \approx 0.3653$$,
 > $$\theta \approx 68.6^\circ$$
 >
 > ---
 >
-> **示例 2b** — 正交判断 (SLAM 中常用)
+> **Example 2b** — Orthogonality check (commonly used in SLAM)
 >
 >
-$$a = [1, 0, 0]^\top$$
-,
-$$b = [0, 1, 0]^\top$$
+> $$a = [1, 0, 0]^\top$$
+> ,
+> $$b = [0, 1, 0]^\top$$
 >
 > $$a \cdot b = 1\times0 + 0\times1 + 0\times0 = 0$$
 >
-> 点积为0 → 两向量**正交**（垂直）。X轴和Y轴互相垂直。
+> Dot product is 0 → the two vectors are **orthogonal** (perpendicular). The X-axis and Y-axis are perpendicular to each other.
 
-- 若
+- If
   $$a \cdot b = 0$$
-  ，则两向量**正交**（SLAM中常用于判断方向是否垂直）
-  若
+  , the two vectors are **orthogonal** (commonly used in SLAM to check whether directions are perpendicular)
+  If
   $$a \cdot b > 0$$
-  ，夹角 < 90°用于计算**重投影误差**中像素误差的平方和
+  , the angle < 90° — used to compute the sum of squared pixel errors in **reprojection error**
+- 
 
-#### 叉积 (Cross Product)
+#### Cross Product
 
-$$a \times b = \begin{bmatrix} a_2b_3 - a_3b_2 \\\\ a_3b_1 - a_1b_3 \\\\ a_1b_2 - a_2b_1 \end{bmatrix}$$
+$$a \times b = \begin{bmatrix} a_2b_3 - a_3b_2 \\ a_3b_1 - a_1b_3 \\ a_1b_2 - a_2b_1 \end{bmatrix}$$
 
-几何意义：结果向量垂直于 a 和 b，模长 =
+Geometric meaning: the resulting vector is perpendicular to both a and b, with magnitude =
 $$\|a\| \cdot \|b\| \cdot \sin\theta$$
 
-> **示例 3** — 叉积计算
+> **Example 3** — Computing the cross product
 >
 >
-$$a = [1, 2, 3]^\top$$
-,
-$$b = [4, 5, 6]^\top$$
+> $$a = [1, 2, 3]^\top$$
+> ,
+> $$b = [4, 5, 6]^\top$$
 >
-> $$a \times b = \begin{bmatrix} 2\times6 - 3\times5 \\\\ 3\times4 - 1\times6 \\\\ 1\times5 - 2\times4 \end{bmatrix} = \begin{bmatrix} 12 - 15 \\\\ 12 - 6 \\\\ 5 - 8 \end{bmatrix} = \begin{bmatrix} -3 \\\\ 6 \\\\ -3 \end{bmatrix}$$
+> $$a \times b = \begin{bmatrix} 2\times6 - 3\times5 \\ 3\times4 - 1\times6 \\ 1\times5 - 2\times4 \end{bmatrix} = \begin{bmatrix} 12 - 15 \\ 12 - 6 \\ 5 - 8 \end{bmatrix} = \begin{bmatrix} -3 \\ 6 \\ -3 \end{bmatrix}$$
 >
-> 验证垂直性:
+> Verify perpendicularity:
 > $$(a \times b) \cdot a = -3\times1 + 6\times2 + (-3)\times3 = -3+12-9 = 0$$
 > ✓
 >
-> SLAM 用途：
-> - 计算**平面法向量**：空间中两个非平行向量叉积即得法向量。如
+> Uses in SLAM:
+> - Computing **plane normal vectors**: the cross product of two non-parallel vectors in space yields the normal vector. For example,
 > - $$a=[1,0,0]^\top$$,
 >   $$b=[0,1,0]^\top$$
->   ，则
+>   , then
 >   $$a\times b=[0,0,1]^\top$$
->   （Z轴法向量，即XY平面的法向）
-> - 构造**反对称矩阵**（用于对极几何中的本质矩阵）
+>   (the Z-axis normal vector, i.e., the normal of the XY plane)
+> - Constructing the **skew-symmetric matrix** (used for the essential matrix in epipolar geometry)
 
-#### 反对称矩阵 (Skew-Symmetric Matrix)
+#### Skew-Symmetric Matrix
 
-任意向量
+Any vector
 $$v = [x, y, z]^\top$$
-可构造：
+can be used to construct:
 
-$$v^\wedge = \begin{bmatrix} 0 & -z & y \\\\ z & 0 & -x \\\\ -y & x & 0 \end{bmatrix}$$
+$$v^\wedge = \begin{bmatrix} 0 & -z & y \\ z & 0 & -x \\ -y & x & 0 \end{bmatrix}$$
 
-性质：
+Property:
 $$a^\wedge b = a \times b$$
-（反对称矩阵乘向量 = 叉积）
+(skew-symmetric matrix times vector = cross product)
 
-> **示例 4** — 构造反对称矩阵并验证
+> **Example 4** — Constructing a skew-symmetric matrix and verifying
 >
 > $$v = [1, 2, 3]^\top$$
 > :
-> $$v^\wedge = \begin{bmatrix} 0 & -3 & 2 \\\\ 3 & 0 & -1 \\\\ -2 & 1 & 0 \end{bmatrix}$$
+> $$v^\wedge = \begin{bmatrix} 0 & -3 & 2 \\ 3 & 0 & -1 \\ -2 & 1 & 0 \end{bmatrix}$$
 >
-> 验证
+> Verify
 > $$v^\wedge b = v \times b$$
-> （用
+> (using
 > $$b=[4,5,6]^\top$$
-> ）:
-> $$v^\wedge b = \begin{bmatrix} 0 & -3 & 2 \\\\ 3 & 0 & -1 \\\\ -2 & 1 & 0 \end{bmatrix} \begin{bmatrix} 4 \\\\ 5 \\\\ 6 \end{bmatrix} = \begin{bmatrix} 0\times4 + (-3)\times5 + 2\times6 \\\\ 3\times4 + 0\times5 + (-1)\times6 \\\\ (-2)\times4 + 1\times5 + 0\times6 \end{bmatrix} = \begin{bmatrix} -15+12 \\\\ 12-6 \\\\ -8+5 \end{bmatrix} = \begin{bmatrix} -3 \\\\ 6 \\\\ -3 \end{bmatrix}$$
+> ):
+> $$v^\wedge b = \begin{bmatrix} 0 & -3 & 2 \\ 3 & 0 & -1 \\ -2 & 1 & 0 \end{bmatrix} \begin{bmatrix} 4 \\ 5 \\ 6 \end{bmatrix} = \begin{bmatrix} 0\times4 + (-3)\times5 + 2\times6 \\ 3\times4 + 0\times5 + (-1)\times6 \\ (-2)\times4 + 1\times5 + 0\times6 \end{bmatrix} = \begin{bmatrix} -15+12 \\ 12-6 \\ -8+5 \end{bmatrix} = \begin{bmatrix} -3 \\ 6 \\ -3 \end{bmatrix}$$
 >
-> 这与示例3中
+> This matches the result of
 > $$v \times b$$
-> 结果一致 ✓
+> from Example 3 ✓
 >
-> 这正是**本质矩阵**
-> $$E = t^\wedge R$$
-> 中的
+> This is exactly the
 > $$t^\wedge$$
+> in the **essential matrix**
+> $$E = t^\wedge R$$
 
 ---
 
-### 2.1.2 矩阵 (Matrix)
+### 2.1.2 Matrix
 
-**SLAM 中最重要的矩阵类型：**
+**The most important matrix types in SLAM:**
 
-| 矩阵类型 | 符号 | 用途 |
-|----------|------|------|
-| 旋转矩阵 | $R$ | $R^\top R = I$, $\det(R)=1$：3D旋转变换 |
-| 相机内参 | $K$ | 将3D相机坐标映射到2D像素 |
-| 投影矩阵 | $P = K[R \mid t]$ | 世界3D → 图像2D |
-| Hessian矩阵 | $H = J^\top J$ | 优化中的二阶信息 |
-| 协方差矩阵 | $\Sigma$ | 描述状态不确定性 |
+| Matrix Type | Symbol | Use |
+|-------------|--------|-----|
+| Rotation Matrix | $R$ | $R^\top R = I$, $\det(R)=1$: 3D rotation transformation |
+| Camera Intrinsics | $K$ | Maps 3D camera coordinates to 2D pixels |
+| Projection Matrix | $P = K[R \mid t]$ | World 3D → Image 2D |
+| Hessian Matrix | $H = J^\top J$ | Second-order information in optimization |
+| Covariance Matrix | $\Sigma$ | Describes state uncertainty |
 
-#### 矩阵的秩 (Rank)
+#### Matrix Rank
 
-矩阵的秩 = 线性无关的行/列数。
+The rank of a matrix = the number of linearly independent rows/columns.
 
-> **示例 5** — 计算矩阵的秩
+> **Example 5** — Computing the rank of a matrix
 >
-> $$A = \begin{bmatrix} 1 & 2 & 3 \\\\ 2 & 4 & 6 \\\\ 3 & 6 & 9 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 1 & 2 & 3 \\ 2 & 4 & 6 \\ 3 & 6 & 9 \end{bmatrix}$$
 >
-> 观察：第2行 = 第1行 × 2，第3行 = 第1行 × 3 → 只有1个独立行 →
+> Observe: row 2 = row 1 × 2, row 3 = row 1 × 3 → only 1 independent row →
 > $$\text{rank}(A) = 1$$
 >
-> $$B = \begin{bmatrix} 1 & 2 & 3 \\\\ 4 & 5 & 6 \\\\ 7 & 8 & 9 \end{bmatrix}$$
+> $$B = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \\ 7 & 8 & 9 \end{bmatrix}$$
 >
-> 第3行 = 2×第2行 − 第1行 (
+> Row 3 = 2×Row 2 − Row 1 (
 > $$[14,16,18] - [1,2,3] = [13,14,15]$$
-> ≠ [7,8,9])... 实际上这个矩阵的秩=2（行列式为0，但前两行线性无关），因为
+> ≠ [7,8,9])... Actually, the rank of this matrix = 2 (determinant is 0, but the first two rows are linearly independent), because
 > $$\det(B) = 1(45-48) - 2(36-42) + 3(32-35) = -3 + 12 - 9 = 0$$
 
-- SLAM 中：
+- In SLAM:
+  The
   $$E$$
-  矩阵秩必须为2（八点法恢复后要强制 SVD 置最小奇异值为0）
+  matrix must have rank 2 (after recovery via the eight-point algorithm, SVD must be used to force the smallest singular value to zero)
+  The rank of the
   $$H$$
-  矩阵的秩决定了解的唯一性（秩不足 → 需要先验约束）
+  matrix determines the uniqueness of the solution (rank deficiency → prior constraints are needed)
 
-#### 行列式 (Determinant)
+#### Determinant
 
-> **示例 6** — 计算行列式
+> **Example 6** — Computing determinants
 >
-> 2×2 矩阵:
-> $$\det\begin{bmatrix} a & b \\\\ c & d \end{bmatrix} = ad - bc$$
+> 2×2 matrix:
+> $$\det\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ad - bc$$
 >
-> $$A = \begin{bmatrix} 2 & 1 \\\\ 3 & 4 \end{bmatrix} \quad \Rightarrow \quad \det(A) = 2\times4 - 1\times3 = 8 - 3 = 5$$
+> $$A = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix} \quad \Rightarrow \quad \det(A) = 2\times4 - 1\times3 = 8 - 3 = 5$$
 >
-> 3×3 矩阵:
-> $$R_z(30^\circ) = \begin{bmatrix} \cos30^\circ & -\sin30^\circ & 0 \\\\ \sin30^\circ & \cos30^\circ & 0 \\\\ 0 & 0 & 1 \end{bmatrix} = \begin{bmatrix} 0.866 & -0.5 & 0 \\\\ 0.5 & 0.866 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
+> 3×3 matrix:
+> $$R_z(30^\circ) = \begin{bmatrix} \cos30^\circ & -\sin30^\circ & 0 \\ \sin30^\circ & \cos30^\circ & 0 \\ 0 & 0 & 1 \end{bmatrix} = \begin{bmatrix} 0.866 & -0.5 & 0 \\ 0.5 & 0.866 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
 >
 > $$\det(R_z) = 0.866 \times (0.866\times1 - 0\times0) - (-0.5) \times (0.5\times1 - 0\times0) + 0 \times (...)$$
 > $$= 0.866 \times 0.866 + 0.5 \times 0.5 = 0.75 + 0.25 = 1$$
 >
-> 旋转矩阵
+> Rotation matrix
 > $$\det(R) = 1$$
-> （保持体积和手性） ✓
+> (preserves volume and handedness) ✓
 
 - $$\det(R) = 1$$
-  ：旋转矩阵保持体积
+  : rotation matrices preserve volume
   $$\det(H)$$
-  ：优化问题的可解性指标
+  : indicator of the solvability of an optimization problem
 
-#### 逆矩阵
+#### Inverse Matrix
 
-- 旋转矩阵的特殊性质:
+- Special property of rotation matrices:
   $$R^{-1} = R^\top$$
-  （正交矩阵）。一般矩阵求逆用 LU 分解或 SVD。
-  SLAM 中
+  (orthogonal matrix). General matrix inversion uses LU decomposition or SVD.
+  In SLAM,
   $$K^{-1}$$
-  用于从像素坐标恢复归一化相机坐标
+  is used to recover normalized camera coordinates from pixel coordinates
 
-> **示例 7** — 计算逆矩阵
+> **Example 7** — Computing the inverse matrix
 >
-> $$A = \begin{bmatrix} 2 & 1 \\\\ 3 & 4 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix}$$
 >
-> 2×2 逆矩阵公式:
-> $$A^{-1} = \frac{1}{\det(A)}\begin{bmatrix} d & -b \\\\ -c & a \end{bmatrix} = \frac{1}{ad-bc}\begin{bmatrix} d & -b \\\\ -c & a \end{bmatrix}$$
+> 2×2 inverse formula:
+> $$A^{-1} = \frac{1}{\det(A)}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix} = \frac{1}{ad-bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$$
 >
-> $$A^{-1} = \frac{1}{5}\begin{bmatrix} 4 & -1 \\\\ -3 & 2 \end{bmatrix} = \begin{bmatrix} 0.8 & -0.2 \\\\ -0.6 & 0.4 \end{bmatrix}$$
+> $$A^{-1} = \frac{1}{5}\begin{bmatrix} 4 & -1 \\ -3 & 2 \end{bmatrix} = \begin{bmatrix} 0.8 & -0.2 \\ -0.6 & 0.4 \end{bmatrix}$$
 >
-> 验证:
-> $$A A^{-1} = \begin{bmatrix} 2 & 1 \\\\ 3 & 4 \end{bmatrix} \begin{bmatrix} 0.8 & -0.2 \\\\ -0.6 & 0.4 \end{bmatrix} = \begin{bmatrix} 1.6-0.6 & -0.4+0.4 \\\\ 2.4-2.4 & -0.6+1.6 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\\\ 0 & 1 \end{bmatrix}$$
+> Verification:
+> $$A A^{-1} = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix} \begin{bmatrix} 0.8 & -0.2 \\ -0.6 & 0.4 \end{bmatrix} = \begin{bmatrix} 1.6-0.6 & -0.4+0.4 \\ 2.4-2.4 & -0.6+1.6 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$$
 > ✓
 >
 > ---
 >
-> **示例 7b** — 旋转矩阵的特殊性
+> **Example 7b** — Special property of rotation matrices
 >
-> $$R = R_z(30^\circ) = \begin{bmatrix} 0.866 & -0.5 & 0 \\\\ 0.5 & 0.866 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R = R_z(30^\circ) = \begin{bmatrix} 0.866 & -0.5 & 0 \\ 0.5 & 0.866 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
 >
-> $$R^{-1} = R^\top = \begin{bmatrix} 0.866 & 0.5 & 0 \\\\ -0.5 & 0.866 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
-> （即旋转
+> $$R^{-1} = R^\top = \begin{bmatrix} 0.866 & 0.5 & 0 \\ -0.5 & 0.866 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> (i.e., a rotation of
 > $$-30^\circ$$
-> ，因为
+> , because
 > $$\cos(-30^\circ)=\cos30^\circ$$,
 > $$\sin(-30^\circ)=-\sin30^\circ$$
-> ）
+> )
 
-#### QR 分解
+#### QR Decomposition
 
 $$A = QR$$
 
-Q 是正交矩阵，R 是上三角矩阵。SLAM 中用于最小二乘问题的稳定求解。
+Q is an orthogonal matrix, R is an upper triangular matrix. Used in SLAM for stable solutions to least-squares problems.
 
-> **示例 8** — QR 分解（Gram-Schmidt）
+> **Example 8** — QR decomposition (Gram-Schmidt)
 >
-> $$A = \begin{bmatrix} 1 & 2 \\\\ 3 & 2 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 1 & 2 \\ 3 & 2 \end{bmatrix}$$
 >
-> 列向量:
+> Column vectors:
 > $$a_1 = [1,3]^\top$$,
 > $$a_2 = [2,2]^\top$$
 >
 > **Step 1**:
-$$u_1 = a_1 = [1,3]^\top$$
+> $$u_1 = a_1 = [1,3]^\top$$
 > $$q_1 = \frac{u_1}{\|u_1\|} = \frac{[1,3]^\top}{\sqrt{10}} \approx [0.3162, 0.9487]^\top$$
 >
-> **Step 2** 投影:
+> **Step 2** projection:
 > **Step 2** $$r_{12} = q_1^\top a_2 = 0.3162\times2 + 0.9487\times2 = 2.5298$$
-> $$u_2 = a_2 - r_{12}q_1 = \begin{bmatrix} 2 \\\\ 2 \end{bmatrix} - 2.5298\begin{bmatrix} 0.3162 \\\\ 0.9487 \end{bmatrix} = \begin{bmatrix} 2 - 0.8 \\\\ 2 - 2.4 \end{bmatrix} = \begin{bmatrix} 1.2 \\\\ -0.4 \end{bmatrix}$$
+> $$u_2 = a_2 - r_{12}q_1 = \begin{bmatrix} 2 \\ 2 \end{bmatrix} - 2.5298\begin{bmatrix} 0.3162 \\ 0.9487 \end{bmatrix} = \begin{bmatrix} 2 - 0.8 \\ 2 - 2.4 \end{bmatrix} = \begin{bmatrix} 1.2 \\ -0.4 \end{bmatrix}$$
 > $$q_2 = \frac{u_2}{\|u_2\|} = \frac{[1.2,-0.4]^\top}{\sqrt{1.44+0.16}} = \frac{[1.2,-0.4]^\top}{\sqrt{1.6}} \approx [0.9487, -0.3162]^\top$$
 >
-> **结果**:
-> $$Q = \begin{bmatrix} 0.3162 & 0.9487 \\\\ 0.9487 & -0.3162 \end{bmatrix}, \quad R = \begin{bmatrix} \|u_1\| & r_{12} \\\\ 0 & \|u_2\| \end{bmatrix} = \begin{bmatrix} 3.1623 & 2.5298 \\\\ 0 & 1.2649 \end{bmatrix}$$
+> **Result**:
+> $$Q = \begin{bmatrix} 0.3162 & 0.9487 \\ 0.9487 & -0.3162 \end{bmatrix}, \quad R = \begin{bmatrix} \|u_1\| & r_{12} \\ 0 & \|u_2\| \end{bmatrix} = \begin{bmatrix} 3.1623 & 2.5298 \\ 0 & 1.2649 \end{bmatrix}$$
 >
-> 验证:
+> Verification:
 > $$QR = A$$
 > ...
-> $$\begin{bmatrix}0.3162\times3.1623 & 0.3162\times2.5298+0.9487\times1.2649 \\\\ 0.9487\times3.1623 & 0.9487\times2.5298+(-0.3162)\times1.2649\end{bmatrix} = \begin{bmatrix}1 & 2 \\\\ 3 & 2\end{bmatrix} = A$$
+> $$\begin{bmatrix}0.3162\times3.1623 & 0.3162\times2.5298+0.9487\times1.2649 \\ 0.9487\times3.1623 & 0.9487\times2.5298+(-0.3162)\times1.2649\end{bmatrix} = \begin{bmatrix}1 & 2 \\ 3 & 2\end{bmatrix} = A$$
 > ✓
 
 ---
 
-### 2.1.3 奇异值分解 (SVD) — 最重要！
+### 2.1.3 Singular Value Decomposition (SVD) — Most Important!
 
 $$A = U \Sigma V^\top$$
 
-- U：左奇异向量（A 的列空间正交基）Σ：对角矩阵，非负奇异值降序排列V：右奇异向量（A 的行空间正交基）
+- U: left singular vectors (orthonormal basis for the column space of A)
+  Σ: diagonal matrix with non-negative singular values in descending order
+  V: right singular vectors (orthonormal basis for the row space of A)
 
-> **示例 9** — SVD 手算演练（2×2 矩阵）
+> **Example 9** — SVD worked out by hand (2×2 matrix)
 >
-> $$A = \begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix}$$
 >
-> **Step 1** 计算
+> **Step 1** Compute
 > **Step 1** $$A^\top A$$
-> $$A^\top A = \begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} \begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} = \begin{bmatrix} 10 & 6 \\\\ 6 & 10 \end{bmatrix}$$
+> $$A^\top A = \begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} \begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} = \begin{bmatrix} 10 & 6 \\ 6 & 10 \end{bmatrix}$$
 >
-> **Step 2** 求
+> **Step 2** Find the eigenvalues and eigenvectors of
 > **Step 2** $$A^\top A$$
-> **Step 2** 的特征值和特征向量
-> $$\det(A^\top A - \lambda I) = \det\begin{bmatrix} 10-\lambda & 6 \\\\ 6 & 10-\lambda \end{bmatrix} = (10-\lambda)^2 - 36 = 0$$
+> $$\det(A^\top A - \lambda I) = \det\begin{bmatrix} 10-\lambda & 6 \\ 6 & 10-\lambda \end{bmatrix} = (10-\lambda)^2 - 36 = 0$$
 > $$\lambda^2 - 20\lambda + 64 = 0 \quad \Rightarrow \quad \lambda_1 = 16,\ \lambda_2 = 4$$
 >
-> 奇异值:
+> Singular values:
 > $$\sigma_1 = \sqrt{16} = 4$$,
 > $$\sigma_2 = \sqrt{4} = 2$$
 >
-> **Step 3** 求特征向量（即
+> **Step 3** Find the eigenvectors (i.e., the columns of
 > **Step 3** $$V$$
-> **Step 3** 的列）
+> )
 >
-> 对
+> For
 > $$\lambda_1=16$$:
-> $$(A^\top A - 16I)v_1 = \begin{bmatrix} -6 & 6 \\\\ 6 & -6 \end{bmatrix} v_1 = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}[1, 1]^\top$$
+> $$(A^\top A - 16I)v_1 = \begin{bmatrix} -6 & 6 \\ 6 & -6 \end{bmatrix} v_1 = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}[1, 1]^\top$$
 >
-> 对
+> For
 > $$\lambda_2=4$$:
-> $$(A^\top A - 4I)v_2 = \begin{bmatrix} 6 & 6 \\\\ 6 & 6 \end{bmatrix} v_2 = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}[1, -1]^\top$$
+> $$(A^\top A - 4I)v_2 = \begin{bmatrix} 6 & 6 \\ 6 & 6 \end{bmatrix} v_2 = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}[1, -1]^\top$$
 >
-> $$V = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\\\ 1 & -1 \end{bmatrix} \approx \begin{bmatrix} 0.7071 & 0.7071 \\\\ 0.7071 & -0.7071 \end{bmatrix}$$
+> $$V = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix} \approx \begin{bmatrix} 0.7071 & 0.7071 \\ 0.7071 & -0.7071 \end{bmatrix}$$
 >
-> **Step 4** 求
+> **Step 4** Find the columns of
 > **Step 4** $$U$$
-> **Step 4** 的列:
+> :
 > **Step 4** $$u_i = Av_i / \sigma_i$$
 >
-> $$u_1 = \frac{1}{4}\begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ 1 \end{bmatrix} = \frac{1}{4\sqrt{2}}\begin{bmatrix} 4 \\\\ 4 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ 1 \end{bmatrix}$$
-> $$u_2 = \frac{1}{2}\begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ -1 \end{bmatrix} = \frac{1}{2\sqrt{2}}\begin{bmatrix} 2 \\\\ -2 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ -1 \end{bmatrix}$$
+> $$u_1 = \frac{1}{4}\begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix} = \frac{1}{4\sqrt{2}}\begin{bmatrix} 4 \\ 4 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$$
+> $$u_2 = \frac{1}{2}\begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix} = \frac{1}{2\sqrt{2}}\begin{bmatrix} 2 \\ -2 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$$
 >
-> **最终 SVD**:
-> $$A = \begin{bmatrix} 0.7071 & 0.7071 \\\\ 0.7071 & -0.7071 \end{bmatrix} \begin{bmatrix} 4 & 0 \\\\ 0 & 2 \end{bmatrix} \begin{bmatrix} 0.7071 & 0.7071 \\\\ 0.7071 & -0.7071 \end{bmatrix}$$
+> **Final SVD**:
+> $$A = \begin{bmatrix} 0.7071 & 0.7071 \\ 0.7071 & -0.7071 \end{bmatrix} \begin{bmatrix} 4 & 0 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 0.7071 & 0.7071 \\ 0.7071 & -0.7071 \end{bmatrix}$$
 
-**SLAM 中的4个关键用途：**
+**4 key uses of SVD in SLAM:**
 
-1. **求解齐次线性方程（八点法求 F/E 矩阵）**
+1. **Solving homogeneous linear systems (eight-point algorithm for F/E matrices)**
 
    $$Ax = 0$$
 
-   解 = V 的最小奇异值对应的列（最后一列）
+   Solution = the column of V corresponding to the smallest singular value (the last column)
 
-2. **求解非齐次方程的最小二乘解**
+2. **Solving the least-squares solution of a non-homogeneous system**
 
    $$Ax = b$$
 
    $$x = V \Sigma^{-1} U^\top b$$
 
-3. **ICP 中从点云对应求最优刚体变换**
+3. **Finding the optimal rigid-body transformation from point cloud correspondences in ICP**
 
    $$H = \sum (p_i - \bar{p})(q_i - \bar{q})^\top$$
 
-   SVD 分解 H 即得最优旋转
+   SVD decomposition of H yields the optimal rotation
 
-4. **强制矩阵秩约束**
-   如
+4. **Enforcing matrix rank constraints**
+   For example, the
    $$E$$
-   矩阵秩必须为2 → 置最小奇异值为0再重构
+   matrix must have rank 2 → set the smallest singular value to zero and reconstruct
 
-> **示例 10** — SVD 求解最小二乘问题
+> **Example 10** — SVD solving a least-squares problem
 >
-> $$A = \begin{bmatrix} 1 & 2 \\\\ 3 & 4 \\\\ 5 & 6 \end{bmatrix}, \quad b = \begin{bmatrix} 1 \\\\ 1 \\\\ 1 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 1 & 2 \\ 3 & 4 \\ 5 & 6 \end{bmatrix}, \quad b = \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}$$
 >
-> 求
+> Find
 > $$x$$
-> 使
+> that minimizes
 > $$\|Ax - b\|^2$$
-> 最小化。
+> .
 >
-> 使用 SVD 解:
+> SVD solution:
 > $$x = V \Sigma^{-1} U^\top b$$
 >
-> 用 numpy 计算（概念演示）:
+> Using numpy (conceptual demonstration):
 > ```python
 > import numpy as np
 > A = np.array([[1,2],[3,4],[5,6]])
@@ -373,532 +377,532 @@ $$A = U \Sigma V^\top$$
 > U, S, Vt = np.linalg.svd(A, full_matrices=False)
 > x = Vt.T @ np.diag(1/S) @ U.T @ b
 > # x ≈ [-1.0, 1.0]
-> # 验证: Ax = [1,1,1]ᵀ = b（恰好有精确解！）
+> # Verify: Ax = [1,1,1]ᵀ = b (happens to have an exact solution!)
 > ```
 
-**实践示例（从八点法求 F 矩阵）：**
+**Practical example (computing the F matrix via the eight-point algorithm):**
 ```python
-A = ...  # 8×9矩阵，每行来自一对匹配点的对极约束
+A = ...  # 8×9 matrix, each row comes from the epipolar constraint of a pair of matched points
 _, _, Vt = np.linalg.svd(A)
-F = Vt[-1].reshape(3, 3)      # 最小奇异值对应的解
+F = Vt[-1].reshape(3, 3)      # solution corresponding to the smallest singular value
 
-# 强制秩为2
+# Enforce rank 2
 U, S, Vt = np.linalg.svd(F)
-S[2] = 0                       # 最小奇异值置零
-F_rank2 = U @ np.diag(S) @ Vt  # 合法的本质矩阵
+S[2] = 0                       # set the smallest singular value to zero
+F_rank2 = U @ np.diag(S) @ Vt  # valid essential matrix
 ```
 
 ---
 
-### 2.1.4 特征值与特征向量
+### 2.1.4 Eigenvalues and Eigenvectors
 
 $$A v = \lambda v$$
 
 - $$v$$
-  ：特征向量（变换后方向不变）
+  : eigenvector (direction unchanged after transformation)
   $$\lambda$$
-  ：特征值（变换后的缩放倍数）
+  : eigenvalue (scaling factor after transformation)
 
-> **示例 11** — 手算特征值和特征向量
+> **Example 11** — Computing eigenvalues and eigenvectors by hand
 >
-> $$A = \begin{bmatrix} 2 & 1 \\\\ 1 & 2 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$$
 >
-> **Step 1** 特征方程
+> **Step 1** Characteristic equation
 > **Step 1** $$\det(A - \lambda I) = 0$$
-> $$\det\begin{bmatrix} 2-\lambda & 1 \\\\ 1 & 2-\lambda \end{bmatrix} = (2-\lambda)^2 - 1 = 0$$
+> $$\det\begin{bmatrix} 2-\lambda & 1 \\ 1 & 2-\lambda \end{bmatrix} = (2-\lambda)^2 - 1 = 0$$
 > $$\lambda^2 - 4\lambda + 3 = 0 \quad \Rightarrow \quad (\lambda-1)(\lambda-3) = 0$$
 > $$\lambda_1 = 3,\ \lambda_2 = 1$$
 >
-> **Step 2**: 求特征向量
+> **Step 2**: Find the eigenvectors
 >
-> 对
+> For
 > $$\lambda_1=3$$:
-> $$(A-3I)v = \begin{bmatrix} -1 & 1 \\\\ 1 & -1 \end{bmatrix}v = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ 1 \end{bmatrix}$$
+> $$(A-3I)v = \begin{bmatrix} -1 & 1 \\ 1 & -1 \end{bmatrix}v = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$$
 >
-> 对
+> For
 > $$\lambda_2=1$$:
-> $$(A-I)v = \begin{bmatrix} 1 & 1 \\\\ 1 & 1 \end{bmatrix}v = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ -1 \end{bmatrix}$$
+> $$(A-I)v = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}v = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$$
 >
-> **验证**：
+> **Verification**:
 >
-> $$Av_1 = \begin{bmatrix}2&1\\\\1&2\end{bmatrix}\frac{1}{\sqrt{2}}\begin{bmatrix}1\\\\1\end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix}3\\\\3\end{bmatrix} = 3v_1$$
+> $$Av_1 = \begin{bmatrix}2&1\\1&2\end{bmatrix}\frac{1}{\sqrt{2}}\begin{bmatrix}1\\1\end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix}3\\3\end{bmatrix} = 3v_1$$
 >
 > ✓
 
-**SLAM 中的关键应用：**
+**Key applications in SLAM:**
 
-1. **Harris 角点检测**
-   图像梯度协方差矩阵
+1. **Harris corner detection**
+   The two eigenvalues of the image gradient covariance matrix
    $$M$$
-   的两个特征值：
+   :
 - $$\lambda_1, \lambda_2$$
-  都大 → **角点**（两个方向都有大梯度）
+  both large → **corner** (large gradients in both directions)
   $$\lambda_1 \gg \lambda_2$$
-  或反之 → **边缘**（只一个方向有大梯度）
-  都小 → **平坦区域**
+  or vice versa → **edge** (large gradient in only one direction)
+  both small → **flat region**
 
-   > **示例 12** — Harris 响应计算
+   > **Example 12** — Computing the Harris response
    >
-   > 假设某像素处的结构张量:
-   > $$M = \begin{bmatrix} 100 & 50 \\\\ 50 & 100 \end{bmatrix}$$
+   > Suppose the structure tensor at a certain pixel is:
+   > $$M = \begin{bmatrix} 100 & 50 \\ 50 & 100 \end{bmatrix}$$
    >
-   > 特征值:
+   > Eigenvalues:
    > $$\det(M-\lambda I) = (100-\lambda)^2 - 2500 = 0$$
    > $$\lambda^2 - 200\lambda + 7500 = 0 \Rightarrow \lambda_1 = 150,\ \lambda_2 = 50$$
    >
-   > 两个特征值都大 → **角点**！
+   > Both eigenvalues are large → **corner**!
    >
-   > Harris 响应 (
+   > Harris response (
    > $$k=0.04$$
    > ):
    > $$R = \det(M) - k\cdot\text{trace}(M)^2 = (100\times100 - 50\times50) - 0.04 \times (200)^2$$
    > $$= 7500 - 0.04 \times 40000 = 7500 - 1600 = 5900$$
    >
-   > 对比平坦区域:
-   > $$M = \begin{bmatrix} 1 & 0.1 \\\\ 0.1 & 1 \end{bmatrix}$$,
+   > Compare with a flat region:
+   > $$M = \begin{bmatrix} 1 & 0.1 \\ 0.1 & 1 \end{bmatrix}$$,
    > $$\det=0.99$$,
    > $$\text{trace}=2$$
    > $$R = 0.99 - 0.04 \times 4 = 0.83 \quad\text{(small → flat)}$$
 
-   Harris 响应:
+   Harris response:
    $$R = \lambda_1\lambda_2 - k(\lambda_1+\lambda_2)^2$$
-   等价于
+   is equivalent to
    $$R = \det(M) - k \cdot \text{trace}(M)^2$$
 
-2. **PCA（主成分分析）**
-   协方差矩阵的特征向量 = 数据的主要方向
-   SLAM 中用于点云法向量估计
+2. **PCA (Principal Component Analysis)**
+   The eigenvectors of the covariance matrix = the principal directions of the data
+   Used in SLAM for point cloud normal estimation
 
-3. **可观性分析 (Observability Analysis)**
-   VIO 系统中 FIM (Fisher Information Matrix) 的特征值：
-   - 零特征值 → 对应不可观状态（如VIO中的全局偏航角）
+3. **Observability Analysis**
+   The eigenvalues of the FIM (Fisher Information Matrix) in VIO systems:
+   - Zero eigenvalues → correspond to unobservable states (e.g., global yaw angle in VIO)
 
 ---
 
-### 2.1.5 刚体变换与齐次坐标
+### 2.1.5 Rigid Body Transformations and Homogeneous Coordinates
 
-#### 旋转矩阵 R ∈ SO(3)
+#### Rotation Matrix R ∈ SO(3)
 
 $$SO(3) = \{R \in \mathbb{R}^{3\times3} \mid R^\top R = I,\ \det(R) = 1\}$$
 
-3个自由度（绕X、Y、Z轴各一个旋转角）。
+3 degrees of freedom (one rotation angle about each of the X, Y, Z axes).
 
-绕 Z 轴旋转
+Rotation about the Z axis by
 $$\theta$$:
 
-$$R_z(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\\\ \sin\theta & \cos\theta & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
+$$R_z(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
 
-绕 X 轴旋转
+Rotation about the X axis by
 $$\theta$$:
 
-$$R_x(\theta) = \begin{bmatrix} 1 & 0 & 0 \\\\ 0 & \cos\theta & -\sin\theta \\\\ 0 & \sin\theta & \cos\theta \end{bmatrix}$$
+$$R_x(\theta) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix}$$
 
-绕 Y 轴旋转
+Rotation about the Y axis by
 $$\theta$$:
 
-$$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\\\ 0 & 1 & 0 \\\\ -\sin\theta & 0 & \cos\theta \end{bmatrix}$$
+$$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix}$$
 
-> **示例 13** — 旋转一个 3D 点
+> **Example 13** — Rotating a 3D point
 >
-> 绕 Z 轴旋转
+> Rotate about the Z axis by
 > $$45^\circ$$
 > (
 > $$\cos45^\circ = \sin45^\circ = \frac{\sqrt{2}}{2} \approx 0.7071$$
 > )
 >
-> $$R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\\\ 0.7071 & 0.7071 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\ 0.7071 & 0.7071 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
 >
-> 点
+> Point
 > $$P = [2, 0, 3]^\top$$
-> 旋转后:
-> $$P' = R_z P = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\\\ 0.7071 & 0.7071 & 0 \\\\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 2 \\\\ 0 \\\\ 3 \end{bmatrix} = \begin{bmatrix} 0.7071\times2 + (-0.7071)\times0 + 0\times3 \\\\ 0.7071\times2 + 0.7071\times0 + 0\times3 \\\\ 0\times2 + 0\times0 + 1\times3 \end{bmatrix} = \begin{bmatrix} 1.414 \\\\ 1.414 \\\\ 3 \end{bmatrix}$$
+> after rotation:
+> $$P' = R_z P = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\ 0.7071 & 0.7071 & 0 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 2 \\ 0 \\ 3 \end{bmatrix} = \begin{bmatrix} 0.7071\times2 + (-0.7071)\times0 + 0\times3 \\ 0.7071\times2 + 0.7071\times0 + 0\times3 \\ 0\times2 + 0\times0 + 1\times3 \end{bmatrix} = \begin{bmatrix} 1.414 \\ 1.414 \\ 3 \end{bmatrix}$$
 >
-> 原本在 X 轴上的点
+> The point originally on the X-axis
 > $$(2,0,3)$$
-> 旋转
+> , after a
 > $$45^\circ$$
-> 后到了
+> rotation, ends up at
 > $$(1.414, 1.414, 3)$$
-> ，Z 不变。
+> , with Z unchanged.
 
-#### 齐次变换矩阵 T ∈ SE(3)
+#### Homogeneous Transformation Matrix T ∈ SE(3)
 
-$$T = \begin{bmatrix} R & t \\\\ 0 & 1 \end{bmatrix} \in \mathbb{R}^{4\times4}$$
+$$T = \begin{bmatrix} R & t \\ 0 & 1 \end{bmatrix} \in \mathbb{R}^{4\times4}$$
 
-6个自由度（3旋转 + 3平移）。
+6 degrees of freedom (3 rotation + 3 translation).
 
-变换一个点:
+Transforming a point:
 $$p' = T p$$
-，其中
+, where
 $$p$$
-是齐次坐标
+is the homogeneous coordinate
 $$[x, y, z, 1]^\top$$
 
-> **示例 14** — 完整刚体变换
+> **Example 14** — Complete rigid-body transformation
 >
-> 先绕 Z 轴旋转
+> First rotate about the Z axis by
 > $$90^\circ$$
 > (
 > $$\cos90^\circ=0$$,
 > $$\sin90^\circ=1$$
-> )，再平移
+> ), then translate by
 > $$[1, 2, 0]^\top$$:
 >
-> $$R = R_z(90^\circ) = \begin{bmatrix} 0 & -1 & 0 \\\\ 1 & 0 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}, \quad t = \begin{bmatrix} 1 \\\\ 2 \\\\ 0 \end{bmatrix}$$
+> $$R = R_z(90^\circ) = \begin{bmatrix} 0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}, \quad t = \begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}$$
 >
-> $$T = \begin{bmatrix} 0 & -1 & 0 & 1 \\\\ 1 & 0 & 0 & 2 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+> $$T = \begin{bmatrix} 0 & -1 & 0 & 1 \\ 1 & 0 & 0 & 2 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
 >
-> 点
+> Point
 > $$P_{world} = [3, 0, 5]^\top$$
-> 变换到相机坐标:
-> $$P_{cam} = T \begin{bmatrix} 3 \\\\ 0 \\\\ 5 \\\\ 1 \end{bmatrix} = \begin{bmatrix} 0\times3 + (-1)\times0 + 0\times5 + 1\times1 \\\\ 1\times3 + 0\times0 + 0\times5 + 1\times2 \\\\ 0\times3 + 0\times0 + 1\times5 + 0\times1 \\\\ 0+0+0+1 \end{bmatrix} = \begin{bmatrix} 1 \\\\ 5 \\\\ 5 \\\\ 1 \end{bmatrix}$$
+> transformed to camera coordinates:
+> $$P_{cam} = T \begin{bmatrix} 3 \\ 0 \\ 5 \\ 1 \end{bmatrix} = \begin{bmatrix} 0\times3 + (-1)\times0 + 0\times5 + 1\times1 \\ 1\times3 + 0\times0 + 0\times5 + 1\times2 \\ 0\times3 + 0\times0 + 1\times5 + 0\times1 \\ 0+0+0+1 \end{bmatrix} = \begin{bmatrix} 1 \\ 5 \\ 5 \\ 1 \end{bmatrix}$$
 >
-> 即
+> i.e.,
 > $$P_{cam} = [1, 5, 5]^\top$$
 
-**变换合成**：
+**Transformation composition**:
 $$T_{ac} = T_{ab} \cdot T_{bc}$$
 
-世界点 → 相机坐标：
+World point → camera coordinates:
 $$P_{cam} = T_{cw} \cdot P_{world} = T_{wc}^{-1} \cdot P_{world}$$
 
-> **示例 15** — 变换合成
+> **Example 15** — Transformation composition
 >
 > $$T_{ab}$$
-> : 从 A 到 B（旋转
+> : from A to B (rotation
 > $$90^\circ$$
-> 绕Z，平移
+> about Z, translation
 > $$[1,0,0]$$
-> ）
+> )
 > $$T_{bc}$$
-> : 从 B 到 C（旋转
+> : from B to C (rotation
 > $$90^\circ$$
-> 绕Z，平移
+> about Z, translation
 > $$[0,1,0]$$
-> ）
+> )
 >
-> $$T_{ab} = \begin{bmatrix} 0 & -1 & 0 & 1 \\\\ 1 & 0 & 0 & 0 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}, \quad T_{bc} = \begin{bmatrix} 0 & -1 & 0 & 0 \\\\ 1 & 0 & 0 & 1 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+> $$T_{ab} = \begin{bmatrix} 0 & -1 & 0 & 1 \\ 1 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}, \quad T_{bc} = \begin{bmatrix} 0 & -1 & 0 & 0 \\ 1 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
 >
-> $$T_{ac} = T_{ab} \cdot T_{bc} = \begin{bmatrix} -1 & 0 & 0 & 1 \\\\ 0 & -1 & 0 & 1 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+> $$T_{ac} = T_{ab} \cdot T_{bc} = \begin{bmatrix} -1 & 0 & 0 & 1 \\ 0 & -1 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
 >
-> 复合变换: 绕Z旋转
+> The composite transformation: rotation about Z by
 > $$180^\circ$$
 > (
 > $$90^\circ+90^\circ$$
-> )，平移
+> ), translation by
 > $$[1,1,0]^\top$$
 
-#### 旋转的三种表示
+#### Three Representations of Rotation
 
-| 表示 | 参数数 | 优点 | 缺点 |
-|------|--------|------|------|
-| 欧拉角 | 3 | 直观 | 万向锁，不连续 |
-| 旋转向量 | 3 | 紧凑 | 奇异点(θ=0附近) |
-| 四元数 | 4 | 无奇异性，平滑插值 | 不直观 |
+| Representation | Parameters | Pros | Cons |
+|----------------|------------|------|------|
+| Euler Angles | 3 | Intuitive | Gimbal lock, discontinuities |
+| Rotation Vector (Axis-Angle) | 3 | Compact | Singularity (near θ=0) |
+| Quaternion | 4 | No singularities, smooth interpolation | Not intuitive |
 
-> **示例 16** — 三种表示之间的转换
+> **Example 16** — Conversion between the three representations
 >
-> 绕 Z 轴旋转 60°：
+> Rotation about the Z axis by 60°:
 >
-> $$R_z(60^\circ) = \begin{bmatrix} 0.5 & -0.866 & 0 \\\\ 0.866 & 0.5 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R_z(60^\circ) = \begin{bmatrix} 0.5 & -0.866 & 0 \\ 0.866 & 0.5 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
 >
-> **欧拉角** (ZYX)：
+> **Euler Angles** (ZYX):
 >
 > $$(60^\circ, 0^\circ, 0^\circ)$$
 >
-> **旋转向量** (轴角)：
+> **Rotation Vector** (Axis-Angle):
 >
 > $$\theta = 60^\circ = \frac{\pi}{3}$$
 >
-> 轴：
+> Axis:
 >
 > $$\mathbf{n} = [0, 0, 1]^\top$$
 >
-> 旋转向量：
+> Rotation vector:
 >
 > $$\theta\mathbf{n} = [0, 0, \frac{\pi}{3}]^\top$$
 >
-> **四元数**：
+> **Quaternion**:
 >
 > $$q = (\cos\frac{\theta}{2}, \mathbf{n}\sin\frac{\theta}{2}) = (\cos30^\circ, 0, 0, \sin30^\circ) = (0.866, 0, 0, 0.5)$$
 
-**SLAM 实践**: ORB-SLAM 使用四元数 + 平移向量表示位姿；优化时在 se(3) 李代数上进行（6维向量）。
+**SLAM practice**: ORB-SLAM uses quaternion + translation vector to represent pose; optimization is performed on the se(3) Lie algebra (a 6-dimensional vector).
 
 ---
 
-## 2.2 概率与统计 — SLAM 的不确定性语言
+## 2.2 Probability and Statistics — The Language of Uncertainty in SLAM
 
-SLAM 的本质是概率推断问题：
+The essence of SLAM is a probabilistic inference problem:
 
 $$P(\text{map}, \text{pose} \mid \text{observation})$$
 
-> 给定传感器观测，地图和轨迹的**后验概率**最大是多少？
+> Given sensor observations, what is the maximum **posterior probability** of the map and trajectory?
 
-### 2.2.1 高斯分布 (正态分布)
+### 2.2.1 Gaussian Distribution (Normal Distribution)
 
-#### 一维高斯
+#### Univariate Gaussian
 
 $$p(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$
 
 - $$\mu$$
-  ：均值（最可能的值）
+  : mean (the most probable value)
   $$\sigma$$
-  ：标准差（不确定性度量）
+  : standard deviation (measure of uncertainty)
 
-> **示例 17** — 一维高斯的概率密度计算
+> **Example 17** — Computing probability density for a univariate Gaussian
 >
-> 深度传感器测量深度，噪声服从
+> A depth sensor measures depth, with noise following
 > $$\mathcal{N}(\mu=5.0\text{m},\ \sigma=0.1\text{m})$$
 >
-> 在
+> Probability density at
 > $$x=5.05\text{m}$$
-> 处的概率密度:
+> :
 > $$p(5.05) = \frac{1}{0.1\sqrt{2\pi}} \exp\left(-\frac{(5.05-5.0)^2}{2 \times 0.01}\right) = \frac{1}{0.1\times2.5066} \exp\left(-\frac{0.0025}{0.02}\right)$$
 > $$= \frac{1}{0.25066} \times e^{-0.125} \approx 3.989 \times 0.8825 \approx 3.52$$
 >
-> 在
+> At
 > $$x=5.3\text{m}$$
-> 处 (偏离3σ):
+> (3σ away):
 > $$p(5.3) = \frac{1}{0.1\sqrt{2\pi}} \exp\left(-\frac{0.09}{0.02}\right) = 3.989 \times e^{-4.5} \approx 3.989 \times 0.0111 \approx 0.044$$
 >
-> 可以看到，越偏离均值，概率密度急剧下降。
+> As we can see, the probability density drops rapidly the further we deviate from the mean.
 
-**为什么 SLAM 几乎只用高斯分布？**
-1. 中心极限定理：大量独立误差之和 ≈ 高斯
-2. 高斯分布在边缘化和条件化下封闭（卡尔曼滤波的基础）
-3. 负对数把乘积转为平方和 → 最小二乘优化
+**Why does SLAM almost exclusively use the Gaussian distribution?**
+1. Central Limit Theorem: the sum of a large number of independent errors ≈ Gaussian
+2. The Gaussian distribution is closed under marginalization and conditioning (the foundation of the Kalman filter)
+3. Taking the negative log turns products into sums of squares → least-squares optimization
 
-**68-95-99.7 规则**：
+**The 68-95-99.7 rule**:
 - $$[\mu-\sigma, \mu+\sigma]$$
-  包含 ~68% 的概率
+  contains ~68% of the probability
 - $$[\mu-2\sigma, \mu+2\sigma]$$
-  包含 ~95% 的概率
+  contains ~95% of the probability
 - $$[\mu-3\sigma, \mu+3\sigma]$$
-  包含 ~99.7% 的概率
+  contains ~99.7% of the probability
 
-> **示例 18** — 68-95-99.7 规则应用于 SLAM
+> **Example 18** — The 68-95-99.7 rule applied to SLAM
 >
-> 相机位姿估计的 X 坐标
+> The X coordinate of a camera pose estimate
 > $$\sim \mathcal{N}(\mu=2.0\text{m},\ \sigma=0.05\text{m})$$:
 >
-> - 68% 概率真实值在
+> - 68% probability the true value is within
 >   $$[1.95,\ 2.05]$$ m
-> - 95% 概率真实值在
+> - 95% probability the true value is within
 >   $$[1.90,\ 2.10]$$ m
-> - 99.7% 概率真实值在
->   $$[1.85,\ 2.15]$$m
+> - 99.7% probability the true value is within
+>   $$[1.85,\ 2.15]$$ m
 >
-> 这就是 SLAM 中**不确定性椭球**的一维版本。σ 越小 = 估计越精确。
+> This is the 1D version of the **uncertainty ellipsoid** in SLAM. Smaller σ = more precise estimate.
 
-#### 多元高斯
+#### Multivariate Gaussian
 
 $$p(\mathbf{x}) = \frac{1}{(2\pi)^{n/2}|\Sigma|^{1/2}} \exp\left(-\frac{1}{2}(\mathbf{x}-\mu)^\top\Sigma^{-1}(\mathbf{x}-\mu)\right)$$
 
 - $$\mu$$
-  ：n维均值向量
+  : n-dimensional mean vector
   $$\Sigma$$
-  ：n×n协方差矩阵（描述各维度间的关联）
+  : n×n covariance matrix (describes correlations among dimensions)
 
-SLAM 中：相机位姿的协方差矩阵描述了你的**不确定性椭球**。
+In SLAM: the covariance matrix of the camera pose describes your **uncertainty ellipsoid**.
 
-> **示例 19** — 多元高斯协方差
+> **Example 19** — Multivariate Gaussian covariance
 >
-> 二维位姿
-> $$(x, y)$$
-> 的协方差矩阵:
-> $$\Sigma = \begin{bmatrix} 0.04 & 0.01 \\\\ 0.01 & 0.09 \end{bmatrix}$$
+> Covariance matrix of a 2D pose
+> $$(x, y)$$:
+> $$\Sigma = \begin{bmatrix} 0.04 & 0.01 \\ 0.01 & 0.09 \end{bmatrix}$$
 >
-> 解读：
+> Interpretation:
 > - $$\sigma_x^2 = 0.04 \Rightarrow \sigma_x = 0.2\text{m}$$
-> - （X方向不确定度）
+> - (uncertainty in the X direction)
 > - $$\sigma_y^2 = 0.09 \Rightarrow \sigma_y = 0.3\text{m}$$
-> - （Y方向更不确定）协方差
+> - (more uncertain in the Y direction)
+>   Covariance
 >   $$0.01 > 0$$
->   → X 和 Y 正相关（X偏大时Y也偏大）
+>   → X and Y are positively correlated (when X is larger, Y tends to be larger too)
 >
-> 求
-> $$\Sigma$$
-> 的特征值和特征向量:
-> $$\det\begin{bmatrix} 0.04-\lambda & 0.01 \\\\ 0.01 & 0.09-\lambda \end{bmatrix} = (0.04-\lambda)(0.09-\lambda) - 0.0001 = 0$$
+> Find the eigenvalues and eigenvectors of
+> $$\Sigma$$:
+> $$\det\begin{bmatrix} 0.04-\lambda & 0.01 \\ 0.01 & 0.09-\lambda \end{bmatrix} = (0.04-\lambda)(0.09-\lambda) - 0.0001 = 0$$
 > $$\lambda^2 - 0.13\lambda + 0.0035 = 0 \Rightarrow \lambda_1 \approx 0.093,\ \lambda_2 \approx 0.037$$
 >
-> 不确定性椭圆的半轴长:
+> Semi-axis lengths of the uncertainty ellipse:
 > $$\sqrt{\lambda_1} \approx 0.305\text{m}$$,
 > $$\sqrt{\lambda_2} \approx 0.192\text{m}$$
-> 椭圆方向由对应特征向量决定。
+> The direction of the ellipse is determined by the corresponding eigenvectors.
 
-**协方差矩阵的几何意义**：
-- 对角元素：各变量的方差非对角元素：变量间的相关性特征值决定椭球轴长，特征向量决定椭球方向
+**Geometric meaning of the covariance matrix**:
+- Diagonal elements: variance of each variable
+  Off-diagonal elements: correlation between variables
+  Eigenvalues determine the axis lengths of the ellipsoid, eigenvectors determine its orientation
 
 ---
 
-### 2.2.2 贝叶斯定理
+### 2.2.2 Bayes' Theorem
 
 $$P(A \mid B) = \frac{P(B \mid A) \cdot P(A)}{P(B)}$$
 
 - $$P(A)$$
-  ：**先验**（看到任何数据之前的信念）
+  : **prior** (belief before seeing any data)
   $$P(B \mid A)$$
-  ：**似然**（给定A，B出现的概率）
+  : **likelihood** (probability of observing B given A)
   $$P(A \mid B)$$
-  ：**后验**（看到B后，对A的更新信念）
+  : **posterior** (updated belief about A after seeing B)
 
-> **示例 20** — 贝叶斯定理：SLAM 回环检测
+> **Example 20** — Bayes' Theorem: SLAM loop closure detection
 >
-> 假设：
-> - 回环的先验概率
+> Suppose:
+> - Prior probability of a loop closure
 > - $$P(\text{loop}) = 0.1$$
-> - （只有10%的概率经过之前的地方）
-> - 如果真的是回环，特征匹配成功的概率
+> - (only 10% chance of passing through a previously visited place)
+> - If it really is a loop, the probability of successful feature matching
 > - $$P(\text{many matches} \mid \text{loop}) = 0.95$$
-> - 如果不是回环，特征匹配成功的概率
+> - If it is not a loop, the probability of successful feature matching
 > - $$P(\text{many matches} \mid \text{no loop}) = 0.05$$
-> - （偶尔也会误匹配很多）
+> - (occasional false matches with many correspondences)
 >
-> 现在观察到了很多匹配。回环的后验概率是多少？
+> Now we observe many matches. What is the posterior probability of a loop closure?
 >
-> **Step 1**: 计算全概率
+> **Step 1**: Compute the total probability
 > $$P(\text{many matches}) = P(\text{many matches}\mid\text{loop})P(\text{loop}) + P(\text{many matches}\mid\text{no loop})P(\text{no loop})$$
 > $$= 0.95 \times 0.1 + 0.05 \times 0.9 = 0.095 + 0.045 = 0.14$$
 >
-> **Step 2**: 贝叶斯更新
+> **Step 2**: Bayesian update
 >
 > $$P(\text{loop} \mid \text{many matches}) = \frac{0.95 \times 0.1}{0.14} = \frac{0.095}{0.14} \approx 0.679$$
 >
-> 观察到很多匹配后，回环概率从 10% 更新到了 **68%**！但仍有 32% 可能不是回环。
+> After observing many matches, the loop closure probability updated from 10% to **68%**! But there is still a 32% chance it is not a loop.
 >
-> ORB-SLAM 正是这样：先用 BoW 匹配找到候选回环帧，再通过几何验证（Sim3 对齐）进一步确认。
+> ORB-SLAM does exactly this: first use BoW matching to find candidate loop frames, then further confirm through geometric verification (Sim3 alignment).
 
-#### SLAM 的贝叶斯框架
+#### The Bayesian Framework of SLAM
 
 $$\underbrace{P(X_{1:t}, M \mid Z_{1:t}, U_{1:t})}_{\text{posterior: }P(\text{map, trajectory} \mid \text{observations, controls})} \propto \underbrace{P(Z_t \mid X_t, M)}_{\text{observation model}} \cdot \underbrace{P(X_t \mid X_{t-1}, U_t)}_{\text{motion model}}$$
 
-> 每次新的传感器数据到来，就用贝叶斯定理**更新**我们对世界状态的信念。
+> Every time new sensor data arrives, we use Bayes' theorem to **update** our belief about the state of the world.
 
 ---
 
-### 2.2.3 最大似然估计 (MLE) 与最大后验估计 (MAP)
+### 2.2.3 Maximum Likelihood Estimation (MLE) and Maximum A Posteriori (MAP) Estimation
 
-#### MLE（最大似然）
+#### MLE (Maximum Likelihood)
 
 $$\hat{\theta}_{\text{MLE}} = \arg\max_\theta P(D \mid \theta)$$
 
-「哪种参数最可能产生我们观察到的数据？」
+"Which parameter is most likely to have produced the data we observed?"
 
-SLAM 中：给定匹配点，最可能的相机位姿 → **这就是 PnP 的精神！**
+In SLAM: given matched points, the most probable camera pose → **this is the spirit of PnP!**
 
-> **示例 21** — MLE: 从测量估计真实深度
+> **Example 21** — MLE: estimating the true depth from measurements
 >
-> 三次深度测量:
+> Three depth measurements:
 > $$z = [4.9, 5.1, 5.0]$$
-> 米，假设噪声
+> meters, assuming noise
 > $$\mathcal{N}(0, \sigma^2)$$
 >
-> 似然函数:
+> Likelihood function:
 > $$P(z \mid \mu) = \prod_{i=1}^3 \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(z_i - \mu)^2}{2\sigma^2}\right)$$
 >
-> 取负对数（去掉常数）:
+> Taking the negative log (dropping constants):
 > $$-\log P(z \mid \mu) \propto \sum_{i=1}^3 (z_i - \mu)^2 = (4.9-\mu)^2 + (5.1-\mu)^2 + (5.0-\mu)^2$$
 >
-> 求导使之为0:
+> Differentiate and set to zero:
 > $$\frac{d}{d\mu} = -2(4.9-\mu) - 2(5.1-\mu) - 2(5.0-\mu) = 0$$
 > $$3\mu = 4.9 + 5.1 + 5.0 = 15.0 \quad \Rightarrow \quad \hat{\mu}_{\text{MLE}} = 5.0$$
 >
-> MLE = **样本均值**！（这是高斯假设的自然结果）
+> MLE = **sample mean**! (This is a natural consequence of the Gaussian assumption)
 
-#### MAP（最大后验）
+#### MAP (Maximum A Posteriori)
 
 $$\hat{\theta}_{\text{MAP}} = \arg\max_\theta P(\theta \mid D) = \arg\max_\theta P(D \mid \theta)P(\theta)$$
 
-比 MLE 多了一个先验
+Compared to MLE, there is an additional prior
 $$P(\theta)$$
 
-> **示例 22** — MAP: 带先验的深度估计
+> **Example 22** — MAP: depth estimation with a prior
 >
-> 测量:
+> Measurements:
 > $$z = [5.2, 5.3]$$
-> 。先验: 深度
+> . Prior: depth
 > $$\sim \mathcal{N}(4.5, 1.0^2)$$
-> （我们"相信"大概是4.5m，但不太确定）。
+> (we "believe" it is around 4.5m, but are not very certain).
 >
-> 似然
+> Likelihood
 > $$P(z \mid \mu) \propto \exp(-\frac{(5.2-\mu)^2 + (5.3-\mu)^2}{2\sigma^2})$$
 >
-> 先验
+> Prior
 > $$P(\mu) \propto \exp(-\frac{(\mu-4.5)^2}{2\times1.0})$$
 >
-> 负对数后验（假设
+> Negative log posterior (assuming
 > $$\sigma^2=0.01$$
-> ）:
+> ):
 > $$-\log P(\mu \mid z) \propto \frac{(5.2-\mu)^2 + (5.3-\mu)^2}{2\times0.01} + \frac{(\mu-4.5)^2}{2\times1.0}$$
 > $$= 50[(5.2-\mu)^2 + (5.3-\mu)^2] + 0.5(\mu-4.5)^2$$
 >
-> 最小化:
+> Minimizing:
 > $$\frac{d}{d\mu} = -100(5.2-\mu) - 100(5.3-\mu) + (\mu-4.5) = 0$$
 > $$200\mu - 1050 + \mu - 4.5 = 0 \quad \Rightarrow \quad 201\mu = 1054.5 \quad \Rightarrow \quad \hat{\mu}_{\text{MAP}} \approx 5.25$$
 >
-> 对比 MLE =
+> Compare with MLE =
 > $$(5.2+5.3)/2 = 5.25$$
-> ...在这个例子中 MLE 和 MAP 一样，因为
+> ... In this example MLE and MAP are the same, because
 > $$\sigma^2$$
-> 很小而先验很宽。如果先验窄（置信高），MAP 会被「拉」向先验。
+> is very small and the prior is wide. If the prior were narrow (high confidence), MAP would be "pulled" toward the prior.
 >
-> 实际上：纯 BA = MLE（最小化重投影误差），带先验的 BA = MAP（如固定第一帧位姿）。
+> In practice: pure BA = MLE (minimizing reprojection error), BA with a prior = MAP (e.g., fixing the first frame's pose).
 
-#### 为什么最小化平方误差等同于 MLE？
+#### Why Does Minimizing Squared Error Equal MLE?
 
-假设观测噪声是高斯分布: 
+Assume the observation noise is Gaussian:
 
 $$z = h(x) + \epsilon,\ \epsilon \sim \mathcal{N}(0, \sigma^2)$$
 
 $$P(z \mid x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(z - h(x))^2}{2\sigma^2}\right)$$
 
-取负对数：
+Taking the negative log:
 $$-\log P(z \mid x) = \frac{(z - h(x))^2}{2\sigma^2} + \text{const}$$
 
-所以：
+Therefore:
 $$\arg\max_x P(z \mid x) = \arg\min_x (z - h(x))^2$$
 
-> **示例 23** — 重投影误差 = MLE
+> **Example 23** — Reprojection error = MLE
 >
-> 3D点投影到图像：预测像素
+> 3D point projected to the image: predicted pixel
 > $$(u_{\text{pred}}, v_{\text{pred}}) = h(X, R, t, K)$$
 >
-> 实际观测像素:
+> Actual observed pixel:
 > $$(u_{\text{obs}}, v_{\text{obs}}) = (321.5, 240.3)$$
 >
-> 重投影误差:
+> Reprojection error:
 > $$e = \sqrt{(321.5 - u_{\text{pred}})^2 + (240.3 - v_{\text{pred}})^2}$$
 >
-> 最小化
+> Minimizing
 > $$\sum e^2$$
-> = 最大化
+> = maximizing
 > $$\prod \exp(-e^2/2\sigma^2)$$
-> = **在高斯噪声假设下最大化似然**！
+> = **maximizing the likelihood under the Gaussian noise assumption**!
 >
-> **这就是 Bundle Adjustment 的数学本质！** 最小化重投影误差 ≈ 最大化高斯噪声假设下的似然。
+> **This is the mathematical essence of Bundle Adjustment!** Minimizing reprojection error ≈ maximizing the likelihood under the Gaussian noise assumption.
 
 ---
 
-### 2.2.4 泰勒展开
+### 2.2.4 Taylor Expansion
 
 $$f(x) \approx f(x_0) + f'(x_0)(x - x_0) + \frac{1}{2}f''(x_0)(x - x_0)^2 + \cdots$$
 
-SLAM 中的关键应用：
-- **一阶泰勒** → 线性化非线性函数（高斯-牛顿法的基础）
-- **二阶泰勒** → Hessian矩阵（牛顿法）
-- **李代数扰动** → 在 se(3) 上用一阶泰勒将位姿优化问题线性化
+Key applications in SLAM:
+- **First-order Taylor** → linearizing nonlinear functions (the foundation of the Gauss-Newton method)
+- **Second-order Taylor** → Hessian matrix (Newton's method)
+- **Lie algebra perturbation** → linearizing the pose optimization problem on se(3) using first-order Taylor expansion
 
-> **示例 24** — 一阶泰勒展开：线性化投影函数
+> **Example 24** — First-order Taylor expansion: linearizing the projection function
 >
-> 假设深度
+> Suppose depth
 > $$Z=5$$
-> ，相机在原点。3D 点的 X 坐标投影:
+> , the camera is at the origin. Projection of a 3D point's X coordinate:
 > $$u(X) = f_x \cdot \frac{X}{Z} + c_x = 500 \cdot \frac{X}{5} + 320 = 100X + 320$$
 >
-> 在
-> $$X_0 = 1.0$$
-> 处展开:
+> Expand around
+> $$X_0 = 1.0$$:
 > $$u(X) \approx u(1.0) + u'(1.0)(X - 1.0)$$
 > $$u(1.0) = 100\times1.0 + 320 = 420$$
 > $$u'(X) = 100 \quad\text{(constant, linear function)}$$
@@ -906,144 +910,145 @@ SLAM 中的关键应用：
 >
 > ---
 >
-> **示例 24b** — 非线性函数的泰勒展开
+> **Example 24b** — Taylor expansion of a nonlinear function
 >
 > $$f(x) = e^x, \quad x_0 = 0$$
 >
 > $$f(0) = 1, \quad f'(0) = 1, \quad f''(0) = 1$$
 >
-> 一阶:
+> First-order:
 > $$f(x) \approx 1 + x$$
-> （在
+> (near
 > $$x=0$$
-> 附近）
-> 二阶:
+> )
+> Second-order:
 > $$f(x) \approx 1 + x + \frac{1}{2}x^2$$
 >
-> 在
-> $$x=0.5$$
-> 处：
-> - 真值:
+> At
+> $$x=0.5$$:
+> - True value:
 >   $$e^{0.5} \approx 1.6487$$
-> - 一阶近似:
+> - First-order approximation:
 >   $$1.5$$
->   （误差 9%）
-> - 二阶近似:
+>   (error 9%)
+> - Second-order approximation:
 >   $$1 + 0.5 + 0.125 = 1.625$$
->   （误差 1.4%）
+>   (error 1.4%)
 >
-> 这就是**高斯-牛顿法 vs 牛顿法**的区别：高斯-牛顿用一阶近似（省掉计算 Hessian 的成本），牛顿法用二阶近似（更精确但计算量大）。
+> This is the difference between **Gauss-Newton vs Newton's method**: Gauss-Newton uses a first-order approximation (saving the cost of computing the Hessian), while Newton's method uses a second-order approximation (more accurate but computationally expensive).
 
 ---
 
-## 2.3 微积分
+## 2.3 Calculus
 
-### 2.3.1 导数与梯度
+### 2.3.1 Derivatives and Gradients
 
-- 一阶导数 → 变化率
-- 梯度
+- First-order derivative → rate of change
+- Gradient
   $$\nabla f$$
-  → 多变量函数的最速上升方向
-- SLAM 中：**雅可比矩阵 J** 就是多维函数对所有变量的偏导数矩阵
+  → direction of steepest ascent for a multivariable function
+- In SLAM: the **Jacobian matrix J** is the matrix of partial derivatives of a multivariable function with respect to all variables
 
-> **示例 25** — 多变量函数的梯度
+> **Example 25** — Gradient of a multivariable function
 >
 > $$f(x, y) = x^2 + 3xy + y^2$$
 >
-> 偏导:
+> Partial derivatives:
 > $$\frac{\partial f}{\partial x} = 2x + 3y$$,
 > $$\frac{\partial f}{\partial y} = 3x + 2y$$
 >
-> 梯度:
+> Gradient:
 > $$\nabla f = [2x + 3y,\ 3x + 2y]^\top$$
 >
-> 在点
-> $$(x,y) = (1, 2)$$
-> 处:
+> At point
+> $$(x,y) = (1, 2)$$:
 > $$\nabla f(1,2) = [2\times1 + 3\times2,\ 3\times1 + 2\times2]^\top = [8,\ 7]^\top$$
 >
-> 函数在
+> The function increases fastest at
 > $$(1,2)$$
-> 处沿方向
-> $$[8,7]^\top$$
-> 增长最快。
+> in the direction of
+> $$[8,7]^\top$$.
 
-> **示例 26** — 雅可比矩阵（SLAM 中最重要的导数）
+> **Example 26** — Jacobian matrix (the most important derivative in SLAM)
 >
-> 重投影函数将 3D 点
+> The reprojection function maps a 3D point
 > $$[X,Y,Z]^\top$$
-> 映射到像素
+> to a pixel
 > $$(u,v)$$:
 > $$u = f_x\frac{X}{Z} + c_x, \quad v = f_y\frac{Y}{Z} + c_y$$
 >
-> 雅可比矩阵（对 3D 点求偏导）:
-> $$J = \begin{bmatrix} \frac{\partial u}{\partial X} & \frac{\partial u}{\partial Y} & \frac{\partial u}{\partial Z} \\\\ \frac{\partial v}{\partial X} & \frac{\partial v}{\partial Y} & \frac{\partial v}{\partial Z} \end{bmatrix} = \begin{bmatrix} \frac{f_x}{Z} & 0 & -\frac{f_x X}{Z^2} \\\\ 0 & \frac{f_y}{Z} & -\frac{f_y Y}{Z^2} \end{bmatrix}$$
+> Jacobian matrix (partial derivatives with respect to the 3D point):
+> $$J = \begin{bmatrix} \frac{\partial u}{\partial X} & \frac{\partial u}{\partial Y} & \frac{\partial u}{\partial Z} \\ \frac{\partial v}{\partial X} & \frac{\partial v}{\partial Y} & \frac{\partial v}{\partial Z} \end{bmatrix} = \begin{bmatrix} \frac{f_x}{Z} & 0 & -\frac{f_x X}{Z^2} \\ 0 & \frac{f_y}{Z} & -\frac{f_y Y}{Z^2} \end{bmatrix}$$
 >
-> 当
+> When
 > $$f_x=f_y=500$$,
 > $$[X,Y,Z]=[1, 0.5, 5]^\top$$:
-> $$J = \begin{bmatrix} \frac{500}{5} & 0 & -\frac{500\times1}{25} \\\\ 0 & \frac{500}{5} & -\frac{500\times0.5}{25} \end{bmatrix} = \begin{bmatrix} 100 & 0 & -20 \\\\ 0 & 100 & -10 \end{bmatrix}$$
+> $$J = \begin{bmatrix} \frac{500}{5} & 0 & -\frac{500\times1}{25} \\ 0 & \frac{500}{5} & -\frac{500\times0.5}{25} \end{bmatrix} = \begin{bmatrix} 100 & 0 & -20 \\ 0 & 100 & -10 \end{bmatrix}$$
 >
-> J 告诉我们: 改变 X（3D）对 u（像素）的影响是 100 像素/米，改变 Z 对 u 的影响是 -20 像素/米。
-> 离相机越远（Z 大），J 越小 → 远处点对位姿优化的贡献小。
+> J tells us: changing X (3D) affects u (pixel) by 100 pixels/meter, changing Z affects u by -20 pixels/meter.
+> The farther from the camera (larger Z), the smaller J becomes → distant points contribute less to pose optimization.
 
-### 2.3.2 对数与指数
+### 2.3.2 Logarithms and Exponentials
 
 -
-$$\ln(e^x) = x$$
-$$\ln(ab) = \ln a + \ln b$$
+  $$\ln(e^x) = x$$
+  $$\ln(ab) = \ln a + \ln b$$
 
-SLAM 中：
-- 取对数把乘积变加和 → 负对数似然 → 最小二乘
+In SLAM:
+- Taking the logarithm turns products into sums → negative log-likelihood → least squares
   $$\exp$$
-  映射 se(3) → SE(3)（李代数到李群）
+  maps se(3) → SE(3) (Lie algebra to Lie group)
   $$\log$$
-  映射 SE(3) → se(3)（李群到李代数）
+  maps SE(3) → se(3) (Lie group to Lie algebra)
 
-> **示例 27** — 对数变换在 SLAM 中的应用
+> **Example 27** — Applying the log transformation in SLAM
 >
-> 似然函数（高斯噪声，多次观测）:
+> Likelihood function (Gaussian noise, multiple observations):
 > $$L = \prod_{i=1}^n \exp\left(-\frac{(z_i - h(x))^2}{2\sigma^2}\right)$$
 >
-> 取对数变为求和:
+> Taking the log turns it into a sum:
 > $$\log L = \sum_{i=1}^n -\frac{(z_i - h(x))^2}{2\sigma^2} = -\frac{1}{2\sigma^2}\sum_{i=1}^n (z_i - h(x))^2$$
 >
-> 最大化
+> Maximizing
 > $$\log L$$
-> = 最小化
+> = minimizing
 > $$\sum (z_i - h(x))^2$$
-> — 这就是**最小二乘**的由来。
+> — this is the origin of **least squares**.
 >
 > ---
 >
-> **示例 27b** — 指数映射（李代数）
+> **Example 27b** — Exponential map (Lie algebra)
 >
-> 旋转向量
+> Rotation vector
 > $$\phi = [0, 0, \frac{\pi}{4}]^\top$$
-> （绕Z轴旋转45°）
-> $$\phi^\wedge = \begin{bmatrix} 0 & -\frac{\pi}{4} & 0 \\\\ \frac{\pi}{4} & 0 & 0 \\\\ 0 & 0 & 0 \end{bmatrix}$$
+> (rotation about the Z axis by 45°)
+> $$\phi^\wedge = \begin{bmatrix} 0 & -\frac{\pi}{4} & 0 \\ \frac{\pi}{4} & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}$$
 >
-> 指数映射（Rodrigues 公式）:
+> Exponential map (Rodrigues formula):
 > $$R = \exp(\phi^\wedge) = I + \frac{\sin\|\phi\|}{\|\phi\|}\phi^\wedge + \frac{1-\cos\|\phi\|}{\|\phi\|^2}(\phi^\wedge)^2$$
 >
 > $$\|\phi\| = \frac{\pi}{4}, \quad \sin\frac{\pi}{4} = 0.7071, \quad 1-\cos\frac{\pi}{4} = 0.2929$$
-> $$R = I + \frac{0.7071}{\pi/4}\phi^\wedge + \cdots = R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\\\ 0.7071 & 0.7071 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R = I + \frac{0.7071}{\pi/4}\phi^\wedge + \cdots = R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\ 0.7071 & 0.7071 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
 >
 > $$\exp$$
-> 将 3 维 se(3) 映射到 4×4 SE(3) 矩阵 — 这是优化位姿的核心操作。
+> maps a 3-dimensional se(3) vector to a 4×4 SE(3) matrix — this is the core operation for optimizing poses.
 
 ---
 
-## 📝 自检清单
+## 📝 Self-Check Checklist
 
-在进入 Level 2 之前，确保你能回答：
+Before moving on to Level 2, make sure you can answer:
 
-- [ ] 叉积在 SLAM 中的两个核心用途是什么？[ ] SVD 分解后如何求解
+- [ ] What are the two core uses of the cross product in SLAM?
+  [ ] After SVD decomposition, how do you solve
   $$Ax=0$$
-  ？[ ] 为什么旋转矩阵的逆等于转置？[ ] 协方差矩阵的特征值告诉你什么？[ ] 为什么最小化重投影误差 = 最大似然估计？[ ] 多元高斯分布在 SLAM 中代表什么？
-  [ ] 齐次变换矩阵 T 有哪四个部分？各有什么含义？
+  ?
+  [ ] Why does the inverse of a rotation matrix equal its transpose?
+  [ ] What do the eigenvalues of a covariance matrix tell you?
+  [ ] Why does minimizing reprojection error = maximum likelihood estimation?
+  [ ] What does the multivariate Gaussian distribution represent in SLAM?
+  [ ] What are the four parts of the homogeneous transformation matrix T? What is the meaning of each?
 
 ---
 
-> **下一步**: 完成 `exercises/exercise_01_linear_algebra.py` 和 `exercises/exercise_02_probability.py` 来巩固这些数学概念。
-
+> **Next step**: Complete `exercises/exercise_01_linear_algebra.py` and `exercises/exercise_02_probability.py` to solidify these mathematical concepts.
