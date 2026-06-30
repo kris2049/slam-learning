@@ -51,7 +51,8 @@ SLAM 用途：
 
 $$v^\wedge = \begin{bmatrix} 0 & -z & y \\ z & 0 & -x \\ -y & x & 0 \end{bmatrix}$$
 
-性质：$a^\wedge b = a \times b$（反对称矩阵乘向量 = 叉积）
+性质：
+$a^\wedge b = a \times b$（反对称矩阵乘向量 = 叉积）
 
 这正是**本质矩阵** $E = t^\wedge R$ 中的 $t^\wedge$。
 
