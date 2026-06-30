@@ -1,170 +1,283 @@
 """
 练习 1: 线性代数 (交互式)
-===========================
-把 `# TODO` 标记的行改成正确代码，然后运行。
-检查通过才算完成。
+=============================
+脚本会逐个出题，你输入代码，当场判对错。
 """
 
 import numpy as np
+import sys
 
-def task_01_vectors():
-    """任务1: 向量运算
+correct = 0
+total = 0
 
-            a = [3, 0, 0],  b = [0, 4, 0]
-    """
-    print("\n═══ 任务1: 向量运算 ═══")
-    a = np.array([3.0, 0.0, 0.0])
-    b = np.array([0.0, 4.0, 0.0])
+def ask(task_name, prompt_text, check_fn, hint, setup_code=""):
+    """出一道题，等用户输入代码，执行后检查结果"""
+    global correct, total
+    total += 1
 
-    # ─── 改下面的 TODO ───
-    # TODO 1: 计算 a 的 L2 范数
-    norm_a = 0  # TODO: 改成 np.linalg.norm(a)
+    print(f"\n{'─'*50}")
+    print(f"  {task_name}")
+    print(f"{'─'*50}")
+    print(f"  {prompt_text}")
+    print()
 
-    # TODO 2: 计算 a 和 b 的点积
-    dot = 0  # TODO: 改成 np.dot(a, b)
+    # 准备环境
+    namespace = {"np": np, "__builtins__": {}}
 
-    # TODO 3: 计算叉积
-    cross = np.zeros(3)  # TODO: 改成 np.cross(a, b)
+    if setup_code:
+        for line in setup_code.strip().split("\n"):
+            line = line.strip()
+            if line and not line.startswith("#"):
+                try:
+                    exec(line, namespace)
+                except Exception as e:
+                    pass  # 忽略 setup 中的错误
 
-    # TODO 4: 计算夹角 (度数)
-    angle_deg = 0  # TODO: 用点积+arccos+degrees
+    attempts = 0
+    while attempts < 5:
+        attempts += 1
+        try:
+            user_input = input("  >>> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\n  已退出。")
+            sys.exit(0)
 
-    # ─── 验证 ───
-    print(f"  |a| = {norm_a}     (应≈3.0)")
-    print(f"  a·b = {dot}        (应≈0.0)")
-    print(f"  a×b = {cross}")
-    print(f"  夹角 = {angle_deg:.1f}° (应≈90°)")
+        if user_input.lower() in ("hint", "提示", "?"):
+            print(f"  💡 {hint}")
+            continue
 
-    ok = True
-    if abs(norm_a - 3.0) > 0.1 or norm_a == 0:
-        print("  ❌ norm_a 不对。提示: np.linalg.norm(a)"); ok = False
-    if abs(dot) > 0.1 or dot == 0:
-        print("  ❌ dot 不对。提示: np.dot(a, b)"); ok = False
-    if not np.allclose(cross, [0, 0, 12]):
-        print("  ❌ cross 不对。提示: np.cross(a, b)"); ok = False
-    if abs(angle_deg - 90) > 1:
-        print("  ❌ angle_deg 不对。步骤: cos = dot/(|a|*|b|) → arccos → degrees"); ok = False
+        # 在命名空间中执行用户代码
+        try:
+            exec(user_input, namespace)
+        except Exception as e:
+            print(f"  ❌ 执行错误: {e}")
+            continue
 
-    if ok: print("  ✅ 通过!")
-    return ok
+        # 检查结果
+        try:
+            ok, msg = check_fn(namespace)
+            if ok:
+                correct += 1
+                print(f"  ✅ {msg}")
+                return True
+            else:
+                print(f"  ❌ {msg}")
+                if attempts >= 2:
+                    print(f"  💡 {hint}")
+        except Exception as e:
+            print(f"  ❌ 结果检查失败: {e}")
+            print(f"  💡 {hint}")
 
-
-def task_02_matrices():
-    """任务2: 旋转矩阵
-
-    绕 Z 轴旋转 30° 的 2D 矩阵。
-    """
-    print("\n═══ 任务2: 旋转矩阵 ═══")
-
-    theta = np.radians(30)
-    v = np.array([1.0, 0.0])
-
-    # TODO: 构造 2x2 旋转矩阵 (绕Z轴转 theta 度)
-    R = np.zeros((2, 2))  # TODO: 改成正确的旋转矩阵
-
-    # TODO: 用 R 旋转 v
-    rotated = np.zeros(2)  # TODO: 改成 R @ v
-
-    # TODO: 计算行列式
-    det_R = 0  # TODO: 改成 np.linalg.det(R)
-
-    print(f"  R = \n{R}")
-    print(f"  rotated = {rotated}  (应≈[0.866, 0.5])")
-    print(f"  det(R) = {det_R}  (应≈1.0)")
-
-    ok = True
-    if abs(det_R - 1.0) > 0.01:
-        print("  ❌ det(R)≠1。旋转矩阵: R[0,0]=cosθ, R[0,1]=-sinθ, R[1,0]=sinθ, R[1,1]=cosθ"); ok = False
-    if abs(rotated[0] - 0.866) > 0.01:
-        print("  ❌ rotated 不对。提示: R @ v"); ok = False
-
-    if ok: print("  ✅ 通过!")
-    return ok
+    print(f"  ⏭ 跳过 (答案: {hint})")
+    return False
 
 
-def task_03_svd():
-    """任务3: SVD 解 Ax=0
+# ══════════════════════════════════════════
+# 任务 1: 向量运算
+# ══════════════════════════════════════════
 
-    八点法求基础矩阵时，解 = V 的最后一列。
-    """
-    print("\n═══ 任务3: SVD 解 Ax=0 ═══")
+def task_01():
+    env = {"np": np, "a": np.array([3., 0., 0.]), "b": np.array([0., 4., 0.])}
 
+    print("\n" + "═"*55)
+    print("  任务1: 向量运算")
+    print("  a = [3, 0, 0],  b = [0, 4, 0]")
+    print("═"*55)
+
+    # 1a: 模长
+    print("\n  1a. 计算 a 的 L2 范数，把结果存入变量 n")
+    print("      例如: n = np.linalg.norm(a)")
+    for _ in range(5):
+        try: user = input("  >>> ").strip()
+        except: return
+        if user in ("hint","?"): print("  💡 n = np.linalg.norm(a)"); continue
+        local = dict(env)
+        try: exec(user, local)
+        except Exception as e: print(f"  ❌ {e}"); continue
+        if "n" not in local: print("  ❌ 请定义变量 n"); continue
+        if abs(local["n"] - 3.0) < 0.1:
+            correct_track(); env["n"] = local["n"]; print("  ✅ |a| = 3.0 正确!"); break
+        else: print(f"  ❌ n={local['n']:.2f}, 应该是 3.0")
+
+    # 1b: 点积
+    print("\n  1b. 计算 a 和 b 的点积，存入变量 d")
+    for _ in range(5):
+        try: user = input("  >>> ").strip()
+        except: return
+        if user in ("hint","?"): print("  💡 d = np.dot(a, b)"); continue
+        local = dict(env)
+        try: exec(user, local)
+        except Exception as e: print(f"  ❌ {e}"); continue
+        if "d" not in local: print("  ❌ 请定义变量 d"); continue
+        if abs(local["d"]) < 0.01:
+            correct_track(); env["d"] = local["d"]; print("  ✅ a·b = 0 (正交) 正确!"); break
+        else: print(f"  ❌ d={local['d']:.2f}, 应该是 0")
+
+    # 1c: 叉积
+    print("\n  1c. 计算 a 和 b 的叉积，存入变量 c (应该是 [0,0,12])")
+    for _ in range(5):
+        try: user = input("  >>> ").strip()
+        except: return
+        if user in ("hint","?"): print("  💡 c = np.cross(a, b)"); continue
+        local = dict(env)
+        try: exec(user, local)
+        except Exception as e: print(f"  ❌ {e}"); continue
+        if "c" not in local: print("  ❌ 请定义变量 c"); continue
+        if np.allclose(local["c"], [0, 0, 12]):
+            correct_track(); print("  ✅ a×b = [0, 0, 12] 正确!"); break
+        else: print(f"  ❌ c={local['c']}, 应该是 [0, 0, 12]")
+
+
+def correct_track():
+    global correct; correct += 1
+
+
+# ══════════════════════════════════════════
+# 任务 2: 旋转矩阵
+# ══════════════════════════════════════════
+
+def task_02():
+    import math
+    env = {"np": np, "math": math, "theta": math.radians(30),
+           "v": np.array([1.0, 0.0])}
+
+    print("\n" + "═"*55)
+    print("  任务2: 旋转矩阵")
+    print("  theta = 30° (已转为弧度), v = [1, 0]")
+    print("═"*55)
+
+    # 2a: 构造旋转矩阵
+    print("\n  2a. 构造 2x2 旋转矩阵 R (绕Z轴转 theta)")
+    print("      存为: R = np.array([[cosθ, -sinθ], [sinθ, cosθ]])")
+    for _ in range(5):
+        try: user = input("  >>> ").strip()
+        except: return
+        local = dict(env)
+        try: exec(user, local)
+        except Exception as e: print(f"  ❌ {e}"); continue
+        if "R" not in local: print("  ❌ 请定义 R"); continue
+        R = local["R"]
+        if isinstance(R, np.ndarray) and R.shape == (2,2):
+            detR = np.linalg.det(R)
+            if abs(detR - 1.0) < 0.01:
+                correct_track(); env["R"] = R; print(f"  ✅ det(R)={detR:.4f} ≈ 1 正确!"); break
+            else: print(f"  ❌ det(R)={detR:.4f}, 旋转矩阵必须是1")
+        else: print("  ❌ R 必须是 2x2 数组")
+
+    # 2b: 旋转向量
+    print("\n  2b. 用 R 旋转 v，存到 rotated")
+    for _ in range(5):
+        try: user = input("  >>> ").strip()
+        except: return
+        local = dict(env)
+        try: exec(user, local)
+        except Exception as e: print(f"  ❌ {e}"); continue
+        if "rotated" not in local: print("  ❌ 请定义 rotated"); continue
+        r = local["rotated"]
+        if abs(r[0] - 0.866) < 0.01 and abs(r[1] - 0.5) < 0.01:
+            correct_track(); print(f"  ✅ rotated = [{r[0]:.3f}, {r[1]:.3f}] 正确!"); break
+        else: print(f"  ❌ rotated={r}, 应≈[0.866, 0.5]. 提示: R @ v")
+
+
+# ══════════════════════════════════════════
+# 任务 3: SVD
+# ══════════════════════════════════════════
+
+def task_03():
     A = np.random.RandomState(42).randn(9, 9)
     A[:, -1] = A[:, 0] * 0.5 + A[:, 1] * 0.3
+    env = {"np": np, "A": A}
 
-    # TODO: SVD 分解
-    U = np.zeros((9, 9))       # TODO: np.linalg.svd(A) 返回 U, S, Vt
-    S = np.zeros(9)
-    Vt = np.zeros((9, 9))
+    print("\n" + "═"*55)
+    print("  任务3: SVD 解 Ax=0")
+    print("  A 是 9x9 秩为8的矩阵，求其零空间向量")
+    print("═"*55)
 
-    # TODO: 取最小奇异值对应的向量
-    x = np.zeros(9)  # TODO: x = Vt[-1] (最后一列)
-
-    # TODO: 验证 Ax ≈ 0
-    residual = 999  # TODO: np.linalg.norm(A @ x)
-
-    print(f"  奇异值: {S.round(3)}")
-    print(f"  ||Ax|| = {residual:.2e}  (应≈0)")
-
-    ok = True
-    if residual > 0.1:
-        print("  ❌ residual 太大。提示:"); ok = False
-        print("    U, S, Vt = np.linalg.svd(A)")
-        print("    x = Vt[-1]")
-        print("    residual = np.linalg.norm(A @ x)")
-
-    if ok: print("  ✅ 通过!")
-    return ok
+    print("\n  3a. 对 A 做 SVD 分解，取最小奇异值对应的右奇异向量")
+    print("      存到 x (应该是9维向量)")
+    print("      提示: U,S,Vt = np.linalg.svd(A); x = Vt[-1]")
+    for _ in range(5):
+        try: user = input("  >>> ").strip()
+        except: return
+        local = dict(env)
+        try: exec(user, local)
+        except Exception as e: print(f"  ❌ {e}"); continue
+        if "x" not in local: print("  ❌ 请定义 x"); continue
+        x = np.asarray(local["x"]).flatten()
+        if len(x) != 9: print(f"  ❌ x 应该是9维, 实际{len(x)}维"); continue
+        residual = np.linalg.norm(A @ x)
+        if residual < 0.001:
+            correct_track(); print(f"  ✅ ||Ax|| = {residual:.2e} ≈ 0 正确!"); break
+        else: print(f"  ❌ ||Ax||={residual:.2e}, 应≈0. 提示: x=Vt[-1]")
 
 
-def task_04_rigid_transform():
-    """任务4: 齐次变换矩阵
+# ══════════════════════════════════════════
+# 任务 4: 齐次变换
+# ══════════════════════════════════════════
 
-    绕 Z 轴转 45°，平移 [1, 2, 3]。
-    """
-    print("\n═══ 任务4: 齐次变换 ═══")
-
+def task_04():
     theta = np.radians(45)
+    env = {"np": np, "theta": theta}
 
-    # TODO: 绕 Z 轴的 3x3 旋转矩阵
-    R = np.zeros((3, 3))  # TODO: 填入正确值
+    print("\n" + "═"*55)
+    print("  任务4: 齐次变换矩阵")
+    print("  绕Z轴转45°, 然后平移 [1,2,3]")
+    print("═"*55)
 
-    # TODO: 4x4 齐次变换矩阵
-    t = np.array([1.0, 2.0, 3.0])
-    T = np.eye(4)  # TODO: T[:3,:3] = R; T[:3,3] = t
+    # 4a: 构造 T
+    print("\n  4a. 构造 4x4 齐次变换矩阵 T")
+    print("      提示: T = np.eye(4); T[:3,:3] = ...; T[:3,3] = [1,2,3]")
+    for _ in range(5):
+        try: user = input("  >>> ").strip()
+        except: return
+        local = dict(env)
+        try: exec(user, local)
+        except Exception as e: print(f"  ❌ {e}"); continue
+        if "T" not in local: print("  ❌ 请定义 T"); continue
+        T = np.asarray(local["T"])
+        if T.shape != (4, 4): print(f"  ❌ T 应该是 4x4"); continue
+        # 检查是否是有效的 SE(3)
+        R_part = T[:3, :3]
+        if abs(np.linalg.det(R_part) - 1.0) > 0.01:
+            print(f"  ❌ det(R) ≠ 1. 检查旋转矩阵"); continue
+        correct_track(); env["T"] = T; print("  ✅ T 构造正确!"); break
 
-    # TODO: T 的逆
-    T_inv = np.eye(4)  # TODO: np.linalg.inv(T)
+    # 4b: 变换一个点
+    print("\n  4b. 用 T 变换点 p=[1,1,1] (齐次坐标 [1,1,1,1]), 存到 pt")
+    for _ in range(5):
+        try: user = input("  >>> ").strip()
+        except: return
+        local = dict(env, p=np.array([1,1,1,1.0]))
+        try: exec(user, local)
+        except Exception as e: print(f"  ❌ {e}"); continue
+        if "pt" not in local: print("  ❌ 请定义 pt"); continue
+        pt = np.asarray(local["pt"])
+        # 手动验证: R=[cos45,-sin45,0; sin45,cos45,0; 0,0,1], t=[1,2,3]
+        # p_trans = R@[1,1,1] + t = [0, 1.414, 1] + [1,2,3] = [1, 3.414, 4]
+        if abs(pt[0]-1.0)<0.1 and abs(pt[1]-3.414)<0.1 and abs(pt[2]-4.0)<0.1:
+            correct_track(); print(f"  ✅ pt = {pt[:3].round(2)} 正确!"); break
+        else: print(f"  ❌ pt={pt[:3]}, 应≈[1, 3.414, 4]. 提示: pt = T @ p")
 
-    # 验证
-    p = np.array([1, 1, 1, 1.0])
-    p_trans = np.zeros(4)  # TODO: T @ p
-    p_back = np.zeros(4)    # TODO: T_inv @ p_trans
 
-    diff = np.linalg.norm(p_back - p)
-    print(f"  T = \n{T}")
-    print(f"  p_trans = {p_trans[:3]}")
-    print(f"  逆回去误差 = {diff:.4f} (应≈0)")
-
-    ok = True
-    if diff > 0.01:
-        print("  ❌ 变换不对。提示:"); ok = False
-        print("    R[0,0]=cosθ, R[0,1]=-sinθ")
-        print("    R[1,0]=sinθ, R[1,1]=cosθ, R[2,2]=1")
-        print("    T[:3,:3]=R; T[:3,3]=t")
-        print("    T_inv = np.linalg.inv(T)")
-
-    if ok: print("  ✅ 通过!")
-    return ok
-
+# ══════════════════════════════════════════
+# 主流程
+# ══════════════════════════════════════════
 
 if __name__ == "__main__":
-    results = [task_01_vectors(), task_02_matrices(),
-               task_03_svd(), task_04_rigid_transform()]
-    passed = sum(results)
-    print(f"\n{'='*40}")
-    print(f"  通过: {passed}/{len(results)}")
-    if passed == len(results):
-        print("  🎉 全部完成!")
+    print("═"*55)
+    print("  SLAM 练习 1: 线性代数")
+    print("  输入你的代码，输 hint 看提示，Ctrl+C 退出")
+    print("═"*55)
+
+    task_01()
+    task_02()
+    task_03()
+    task_04()
+
+    total_q = 8  # 总共8个小问
+    print(f"\n{'═'*55}")
+    print(f"  完成: {correct}/{total_q}")
+    if correct == total_q:
+        print("  🎉 全部正确！进入下一个练习。")
     else:
-        print(f"  还有 {len(results)-passed} 个任务，改完重跑。")
+        print(f"  还有 {total_q-correct} 题，重新运行再试。")
