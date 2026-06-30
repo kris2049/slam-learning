@@ -85,7 +85,7 @@ $$b = [0, 1, 0]^\top$$
 
 #### 叉积 (Cross Product)
 
-$$a \times b = \begin{bmatrix} a_2b_3 - a_3b_2 \\ a_3b_1 - a_1b_3 \\ a_1b_2 - a_2b_1 \end{bmatrix}$$
+$$a \times b = \begin{bmatrix} a_2b_3 - a_3b_2 \\\\ a_3b_1 - a_1b_3 \\\\ a_1b_2 - a_2b_1 \end{bmatrix}$$
 
 几何意义：结果向量垂直于 a 和 b，模长 =
 $$\|a\| \cdot \|b\| \cdot \sin\theta$$
@@ -97,7 +97,7 @@ $$a = [1, 2, 3]^\top$$
 ,
 $$b = [4, 5, 6]^\top$$
 >
-> $$a \times b = \begin{bmatrix} 2\times6 - 3\times5 \\ 3\times4 - 1\times6 \\ 1\times5 - 2\times4 \end{bmatrix} = \begin{bmatrix} 12 - 15 \\ 12 - 6 \\ 5 - 8 \end{bmatrix} = \begin{bmatrix} -3 \\ 6 \\ -3 \end{bmatrix}$$
+> $$a \times b = \begin{bmatrix} 2\times6 - 3\times5 \\\\ 3\times4 - 1\times6 \\\\ 1\times5 - 2\times4 \end{bmatrix} = \begin{bmatrix} 12 - 15 \\\\ 12 - 6 \\\\ 5 - 8 \end{bmatrix} = \begin{bmatrix} -3 \\\\ 6 \\\\ -3 \end{bmatrix}$$
 >
 > 验证垂直性:
 > $$(a \times b) \cdot a = -3\times1 + 6\times2 + (-3)\times3 = -3+12-9 = 0$$
@@ -118,7 +118,7 @@ $$b = [4, 5, 6]^\top$$
 $$v = [x, y, z]^\top$$
 可构造：
 
-$$v^\wedge = \begin{bmatrix} 0 & -z & y \\ z & 0 & -x \\ -y & x & 0 \end{bmatrix}$$
+$$v^\wedge = \begin{bmatrix} 0 & -z & y \\\\ z & 0 & -x \\\\ -y & x & 0 \end{bmatrix}$$
 
 性质：
 $$a^\wedge b = a \times b$$
@@ -126,17 +126,16 @@ $$a^\wedge b = a \times b$$
 
 > **示例 4** — 构造反对称矩阵并验证
 >
->
-$$v = [1, 2, 3]^\top$$
-:
-> $$v^\wedge = \begin{bmatrix} 0 & -3 & 2 \\ 3 & 0 & -1 \\ -2 & 1 & 0 \end{bmatrix}$$
+> $$v = [1, 2, 3]^\top$$
+> :
+> $$v^\wedge = \begin{bmatrix} 0 & -3 & 2 \\\\ 3 & 0 & -1 \\\\ -2 & 1 & 0 \end{bmatrix}$$
 >
 > 验证
 > $$v^\wedge b = v \times b$$
 > （用
 > $$b=[4,5,6]^\top$$
 > ）:
-> $$v^\wedge b = \begin{bmatrix} 0 & -3 & 2 \\ 3 & 0 & -1 \\ -2 & 1 & 0 \end{bmatrix} \begin{bmatrix} 4 \\ 5 \\ 6 \end{bmatrix} = \begin{bmatrix} 0\times4 + (-3)\times5 + 2\times6 \\ 3\times4 + 0\times5 + (-1)\times6 \\ (-2)\times4 + 1\times5 + 0\times6 \end{bmatrix} = \begin{bmatrix} -15+12 \\ 12-6 \\ -8+5 \end{bmatrix} = \begin{bmatrix} -3 \\ 6 \\ -3 \end{bmatrix}$$
+> $$v^\wedge b = \begin{bmatrix} 0 & -3 & 2 \\\\ 3 & 0 & -1 \\\\ -2 & 1 & 0 \end{bmatrix} \begin{bmatrix} 4 \\\\ 5 \\\\ 6 \end{bmatrix} = \begin{bmatrix} 0\times4 + (-3)\times5 + 2\times6 \\\\ 3\times4 + 0\times5 + (-1)\times6 \\\\ (-2)\times4 + 1\times5 + 0\times6 \end{bmatrix} = \begin{bmatrix} -15+12 \\\\ 12-6 \\\\ -8+5 \end{bmatrix} = \begin{bmatrix} -3 \\\\ 6 \\\\ -3 \end{bmatrix}$$
 >
 > 这与示例3中
 > $$v \times b$$
@@ -167,12 +166,12 @@ $$v = [1, 2, 3]^\top$$
 
 > **示例 5** — 计算矩阵的秩
 >
-> $$A = \begin{bmatrix} 1 & 2 & 3 \\ 2 & 4 & 6 \\ 3 & 6 & 9 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 1 & 2 & 3 \\\\ 2 & 4 & 6 \\\\ 3 & 6 & 9 \end{bmatrix}$$
 >
 > 观察：第2行 = 第1行 × 2，第3行 = 第1行 × 3 → 只有1个独立行 →
 > $$\text{rank}(A) = 1$$
 >
-> $$B = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \\ 7 & 8 & 9 \end{bmatrix}$$
+> $$B = \begin{bmatrix} 1 & 2 & 3 \\\\ 4 & 5 & 6 \\\\ 7 & 8 & 9 \end{bmatrix}$$
 >
 > 第3行 = 2×第2行 − 第1行 (
 > $$[14,16,18] - [1,2,3] = [13,14,15]$$
@@ -190,12 +189,12 @@ $$v = [1, 2, 3]^\top$$
 > **示例 6** — 计算行列式
 >
 > 2×2 矩阵:
-> $$\det\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ad - bc$$
+> $$\det\begin{bmatrix} a & b \\\\ c & d \end{bmatrix} = ad - bc$$
 >
-> $$A = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix} \quad \Rightarrow \quad \det(A) = 2\times4 - 1\times3 = 8 - 3 = 5$$
+> $$A = \begin{bmatrix} 2 & 1 \\\\ 3 & 4 \end{bmatrix} \quad \Rightarrow \quad \det(A) = 2\times4 - 1\times3 = 8 - 3 = 5$$
 >
 > 3×3 矩阵:
-> $$R_z(30^\circ) = \begin{bmatrix} \cos30^\circ & -\sin30^\circ & 0 \\ \sin30^\circ & \cos30^\circ & 0 \\ 0 & 0 & 1 \end{bmatrix} = \begin{bmatrix} 0.866 & -0.5 & 0 \\ 0.5 & 0.866 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R_z(30^\circ) = \begin{bmatrix} \cos30^\circ & -\sin30^\circ & 0 \\\\ \sin30^\circ & \cos30^\circ & 0 \\\\ 0 & 0 & 1 \end{bmatrix} = \begin{bmatrix} 0.866 & -0.5 & 0 \\\\ 0.5 & 0.866 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 >
 > $$\det(R_z) = 0.866 \times (0.866\times1 - 0\times0) - (-0.5) \times (0.5\times1 - 0\times0) + 0 \times (...)$$
 > $$= 0.866 \times 0.866 + 0.5 \times 0.5 = 0.75 + 0.25 = 1$$
@@ -220,24 +219,24 @@ $$v = [1, 2, 3]^\top$$
 
 > **示例 7** — 计算逆矩阵
 >
-> $$A = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 2 & 1 \\\\ 3 & 4 \end{bmatrix}$$
 >
 > 2×2 逆矩阵公式:
-> $$A^{-1} = \frac{1}{\det(A)}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix} = \frac{1}{ad-bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$$
+> $$A^{-1} = \frac{1}{\det(A)}\begin{bmatrix} d & -b \\\\ -c & a \end{bmatrix} = \frac{1}{ad-bc}\begin{bmatrix} d & -b \\\\ -c & a \end{bmatrix}$$
 >
-> $$A^{-1} = \frac{1}{5}\begin{bmatrix} 4 & -1 \\ -3 & 2 \end{bmatrix} = \begin{bmatrix} 0.8 & -0.2 \\ -0.6 & 0.4 \end{bmatrix}$$
+> $$A^{-1} = \frac{1}{5}\begin{bmatrix} 4 & -1 \\\\ -3 & 2 \end{bmatrix} = \begin{bmatrix} 0.8 & -0.2 \\\\ -0.6 & 0.4 \end{bmatrix}$$
 >
 > 验证:
-> $$A A^{-1} = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix} \begin{bmatrix} 0.8 & -0.2 \\ -0.6 & 0.4 \end{bmatrix} = \begin{bmatrix} 1.6-0.6 & -0.4+0.4 \\ 2.4-2.4 & -0.6+1.6 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$$
+> $$A A^{-1} = \begin{bmatrix} 2 & 1 \\\\ 3 & 4 \end{bmatrix} \begin{bmatrix} 0.8 & -0.2 \\\\ -0.6 & 0.4 \end{bmatrix} = \begin{bmatrix} 1.6-0.6 & -0.4+0.4 \\\\ 2.4-2.4 & -0.6+1.6 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\\\ 0 & 1 \end{bmatrix}$$
 > ✓
 >
 > ---
 >
 > **示例 7b** — 旋转矩阵的特殊性
 >
-> $$R = R_z(30^\circ) = \begin{bmatrix} 0.866 & -0.5 & 0 \\ 0.5 & 0.866 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R = R_z(30^\circ) = \begin{bmatrix} 0.866 & -0.5 & 0 \\\\ 0.5 & 0.866 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 >
-> $$R^{-1} = R^\top = \begin{bmatrix} 0.866 & 0.5 & 0 \\ -0.5 & 0.866 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R^{-1} = R^\top = \begin{bmatrix} 0.866 & 0.5 & 0 \\\\ -0.5 & 0.866 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 > （即旋转
 > $$-30^\circ$$
 > ，因为
@@ -253,7 +252,7 @@ Q 是正交矩阵，R 是上三角矩阵。SLAM 中用于最小二乘问题的�
 
 > **示例 8** — QR 分解（Gram-Schmidt）
 >
-> $$A = \begin{bmatrix} 1 & 2 \\ 3 & 2 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 1 & 2 \\\\ 3 & 2 \end{bmatrix}$$
 >
 > 列向量:
 > $$a_1 = [1,3]^\top$$,
@@ -265,16 +264,16 @@ $$u_1 = a_1 = [1,3]^\top$$
 >
 > **Step 2** 投影:
 > **Step 2** $$r_{12} = q_1^\top a_2 = 0.3162\times2 + 0.9487\times2 = 2.5298$$
-> $$u_2 = a_2 - r_{12}q_1 = \begin{bmatrix} 2 \\ 2 \end{bmatrix} - 2.5298\begin{bmatrix} 0.3162 \\ 0.9487 \end{bmatrix} = \begin{bmatrix} 2 - 0.8 \\ 2 - 2.4 \end{bmatrix} = \begin{bmatrix} 1.2 \\ -0.4 \end{bmatrix}$$
+> $$u_2 = a_2 - r_{12}q_1 = \begin{bmatrix} 2 \\\\ 2 \end{bmatrix} - 2.5298\begin{bmatrix} 0.3162 \\\\ 0.9487 \end{bmatrix} = \begin{bmatrix} 2 - 0.8 \\\\ 2 - 2.4 \end{bmatrix} = \begin{bmatrix} 1.2 \\\\ -0.4 \end{bmatrix}$$
 > $$q_2 = \frac{u_2}{\|u_2\|} = \frac{[1.2,-0.4]^\top}{\sqrt{1.44+0.16}} = \frac{[1.2,-0.4]^\top}{\sqrt{1.6}} \approx [0.9487, -0.3162]^\top$$
 >
 > **结果**:
-> $$Q = \begin{bmatrix} 0.3162 & 0.9487 \\ 0.9487 & -0.3162 \end{bmatrix}, \quad R = \begin{bmatrix} \|u_1\| & r_{12} \\ 0 & \|u_2\| \end{bmatrix} = \begin{bmatrix} 3.1623 & 2.5298 \\ 0 & 1.2649 \end{bmatrix}$$
+> $$Q = \begin{bmatrix} 0.3162 & 0.9487 \\\\ 0.9487 & -0.3162 \end{bmatrix}, \quad R = \begin{bmatrix} \|u_1\| & r_{12} \\\\ 0 & \|u_2\| \end{bmatrix} = \begin{bmatrix} 3.1623 & 2.5298 \\\\ 0 & 1.2649 \end{bmatrix}$$
 >
 > 验证:
 > $$QR = A$$
 > ...
-> $$\begin{bmatrix}0.3162\times3.1623 & 0.3162\times2.5298+0.9487\times1.2649 \\ 0.9487\times3.1623 & 0.9487\times2.5298+(-0.3162)\times1.2649\end{bmatrix} = \begin{bmatrix}1 & 2 \\ 3 & 2\end{bmatrix} = A$$
+> $$\begin{bmatrix}0.3162\times3.1623 & 0.3162\times2.5298+0.9487\times1.2649 \\\\ 0.9487\times3.1623 & 0.9487\times2.5298+(-0.3162)\times1.2649\end{bmatrix} = \begin{bmatrix}1 & 2 \\\\ 3 & 2\end{bmatrix} = A$$
 > ✓
 
 ---
@@ -287,16 +286,16 @@ $$A = U \Sigma V^\top$$
 
 > **示例 9** — SVD 手算演练（2×2 矩阵）
 >
-> $$A = \begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix}$$
 >
 > **Step 1** 计算
 > **Step 1** $$A^\top A$$
-> $$A^\top A = \begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} \begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} = \begin{bmatrix} 10 & 6 \\ 6 & 10 \end{bmatrix}$$
+> $$A^\top A = \begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} \begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} = \begin{bmatrix} 10 & 6 \\\\ 6 & 10 \end{bmatrix}$$
 >
 > **Step 2** 求
 > **Step 2** $$A^\top A$$
 > **Step 2** 的特征值和特征向量
-> $$\det(A^\top A - \lambda I) = \det\begin{bmatrix} 10-\lambda & 6 \\ 6 & 10-\lambda \end{bmatrix} = (10-\lambda)^2 - 36 = 0$$
+> $$\det(A^\top A - \lambda I) = \det\begin{bmatrix} 10-\lambda & 6 \\\\ 6 & 10-\lambda \end{bmatrix} = (10-\lambda)^2 - 36 = 0$$
 > $$\lambda^2 - 20\lambda + 64 = 0 \quad \Rightarrow \quad \lambda_1 = 16,\ \lambda_2 = 4$$
 >
 > 奇异值:
@@ -309,24 +308,24 @@ $$A = U \Sigma V^\top$$
 >
 > 对
 > $$\lambda_1=16$$:
-> $$(A^\top A - 16I)v_1 = \begin{bmatrix} -6 & 6 \\ 6 & -6 \end{bmatrix} v_1 = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}[1, 1]^\top$$
+> $$(A^\top A - 16I)v_1 = \begin{bmatrix} -6 & 6 \\\\ 6 & -6 \end{bmatrix} v_1 = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}[1, 1]^\top$$
 >
 > 对
 > $$\lambda_2=4$$:
-> $$(A^\top A - 4I)v_2 = \begin{bmatrix} 6 & 6 \\ 6 & 6 \end{bmatrix} v_2 = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}[1, -1]^\top$$
+> $$(A^\top A - 4I)v_2 = \begin{bmatrix} 6 & 6 \\\\ 6 & 6 \end{bmatrix} v_2 = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}[1, -1]^\top$$
 >
-> $$V = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix} \approx \begin{bmatrix} 0.7071 & 0.7071 \\ 0.7071 & -0.7071 \end{bmatrix}$$
+> $$V = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\\\ 1 & -1 \end{bmatrix} \approx \begin{bmatrix} 0.7071 & 0.7071 \\\\ 0.7071 & -0.7071 \end{bmatrix}$$
 >
 > **Step 4** 求
 > **Step 4** $$U$$
 > **Step 4** 的列:
 > **Step 4** $$u_i = Av_i / \sigma_i$$
 >
-> $$u_1 = \frac{1}{4}\begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix} = \frac{1}{4\sqrt{2}}\begin{bmatrix} 4 \\ 4 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$$
-> $$u_2 = \frac{1}{2}\begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix} = \frac{1}{2\sqrt{2}}\begin{bmatrix} 2 \\ -2 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$$
+> $$u_1 = \frac{1}{4}\begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ 1 \end{bmatrix} = \frac{1}{4\sqrt{2}}\begin{bmatrix} 4 \\\\ 4 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ 1 \end{bmatrix}$$
+> $$u_2 = \frac{1}{2}\begin{bmatrix} 3 & 1 \\\\ 1 & 3 \end{bmatrix} \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ -1 \end{bmatrix} = \frac{1}{2\sqrt{2}}\begin{bmatrix} 2 \\\\ -2 \end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ -1 \end{bmatrix}$$
 >
 > **最终 SVD**:
-> $$A = \begin{bmatrix} 0.7071 & 0.7071 \\ 0.7071 & -0.7071 \end{bmatrix} \begin{bmatrix} 4 & 0 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 0.7071 & 0.7071 \\ 0.7071 & -0.7071 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 0.7071 & 0.7071 \\\\ 0.7071 & -0.7071 \end{bmatrix} \begin{bmatrix} 4 & 0 \\\\ 0 & 2 \end{bmatrix} \begin{bmatrix} 0.7071 & 0.7071 \\\\ 0.7071 & -0.7071 \end{bmatrix}$$
 
 **SLAM 中的4个关键用途：**
 
@@ -355,7 +354,7 @@ $$A = U \Sigma V^\top$$
 
 > **示例 10** — SVD 求解最小二乘问题
 >
-> $$A = \begin{bmatrix} 1 & 2 \\ 3 & 4 \\ 5 & 6 \end{bmatrix}, \quad b = \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 1 & 2 \\\\ 3 & 4 \\\\ 5 & 6 \end{bmatrix}, \quad b = \begin{bmatrix} 1 \\\\ 1 \\\\ 1 \end{bmatrix}$$
 >
 > 求
 > $$x$$
@@ -402,11 +401,11 @@ $$A v = \lambda v$$
 
 > **示例 11** — 手算特征值和特征向量
 >
-> $$A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$$
+> $$A = \begin{bmatrix} 2 & 1 \\\\ 1 & 2 \end{bmatrix}$$
 >
 > **Step 1** 特征方程
 > **Step 1** $$\det(A - \lambda I) = 0$$
-> $$\det\begin{bmatrix} 2-\lambda & 1 \\ 1 & 2-\lambda \end{bmatrix} = (2-\lambda)^2 - 1 = 0$$
+> $$\det\begin{bmatrix} 2-\lambda & 1 \\\\ 1 & 2-\lambda \end{bmatrix} = (2-\lambda)^2 - 1 = 0$$
 > $$\lambda^2 - 4\lambda + 3 = 0 \quad \Rightarrow \quad (\lambda-1)(\lambda-3) = 0$$
 > $$\lambda_1 = 3,\ \lambda_2 = 1$$
 >
@@ -414,15 +413,15 @@ $$A v = \lambda v$$
 >
 > 对
 > $$\lambda_1=3$$:
-> $$(A-3I)v = \begin{bmatrix} -1 & 1 \\ 1 & -1 \end{bmatrix}v = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$$
+> $$(A-3I)v = \begin{bmatrix} -1 & 1 \\\\ 1 & -1 \end{bmatrix}v = 0 \Rightarrow v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ 1 \end{bmatrix}$$
 >
 > 对
 > $$\lambda_2=1$$:
-> $$(A-I)v = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}v = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$$
+> $$(A-I)v = \begin{bmatrix} 1 & 1 \\\\ 1 & 1 \end{bmatrix}v = 0 \Rightarrow v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\\\ -1 \end{bmatrix}$$
 >
 > **验证**：
 >
-> $$Av_1 = \begin{bmatrix}2&1\\1&2\end{bmatrix}\frac{1}{\sqrt{2}}\begin{bmatrix}1\\1\end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix}3\\3\end{bmatrix} = 3v_1$$
+> $$Av_1 = \begin{bmatrix}2&1\\\\1&2\end{bmatrix}\frac{1}{\sqrt{2}}\begin{bmatrix}1\\\\1\end{bmatrix} = \frac{1}{\sqrt{2}}\begin{bmatrix}3\\\\3\end{bmatrix} = 3v_1$$
 >
 > ✓
 
@@ -441,7 +440,7 @@ $$A v = \lambda v$$
    > **示例 12** — Harris 响应计算
    >
    > 假设某像素处的结构张量:
-   > $$M = \begin{bmatrix} 100 & 50 \\ 50 & 100 \end{bmatrix}$$
+   > $$M = \begin{bmatrix} 100 & 50 \\\\ 50 & 100 \end{bmatrix}$$
    >
    > 特征值:
    > $$\det(M-\lambda I) = (100-\lambda)^2 - 2500 = 0$$
@@ -456,7 +455,7 @@ $$A v = \lambda v$$
    > $$= 7500 - 0.04 \times 40000 = 7500 - 1600 = 5900$$
    >
    > 对比平坦区域:
-   > $$M = \begin{bmatrix} 1 & 0.1 \\ 0.1 & 1 \end{bmatrix}$$,
+   > $$M = \begin{bmatrix} 1 & 0.1 \\\\ 0.1 & 1 \end{bmatrix}$$,
    > $$\det=0.99$$,
    > $$\text{trace}=2$$
    > $$R = 0.99 - 0.04 \times 4 = 0.83 \quad\text{(small → flat)}$$
@@ -487,17 +486,17 @@ $$SO(3) = \{R \in \mathbb{R}^{3\times3} \mid R^\top R = I,\ \det(R) = 1\}$$
 绕 Z 轴旋转
 $$\theta$$:
 
-$$R_z(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+$$R_z(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\\\ \sin\theta & \cos\theta & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 
 绕 X 轴旋转
 $$\theta$$:
 
-$$R_x(\theta) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix}$$
+$$R_x(\theta) = \begin{bmatrix} 1 & 0 & 0 \\\\ 0 & \cos\theta & -\sin\theta \\\\ 0 & \sin\theta & \cos\theta \end{bmatrix}$$
 
 绕 Y 轴旋转
 $$\theta$$:
 
-$$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix}$$
+$$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\\\ 0 & 1 & 0 \\\\ -\sin\theta & 0 & \cos\theta \end{bmatrix}$$
 
 > **示例 13** — 旋转一个 3D 点
 >
@@ -507,12 +506,12 @@ $$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\si
 > $$\cos45^\circ = \sin45^\circ = \frac{\sqrt{2}}{2} \approx 0.7071$$
 > )
 >
-> $$R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\ 0.7071 & 0.7071 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\\\ 0.7071 & 0.7071 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 >
 > 点
 > $$P = [2, 0, 3]^\top$$
 > 旋转后:
-> $$P' = R_z P = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\ 0.7071 & 0.7071 & 0 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 2 \\ 0 \\ 3 \end{bmatrix} = \begin{bmatrix} 0.7071\times2 + (-0.7071)\times0 + 0\times3 \\ 0.7071\times2 + 0.7071\times0 + 0\times3 \\ 0\times2 + 0\times0 + 1\times3 \end{bmatrix} = \begin{bmatrix} 1.414 \\ 1.414 \\ 3 \end{bmatrix}$$
+> $$P' = R_z P = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\\\ 0.7071 & 0.7071 & 0 \\\\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 2 \\\\ 0 \\\\ 3 \end{bmatrix} = \begin{bmatrix} 0.7071\times2 + (-0.7071)\times0 + 0\times3 \\\\ 0.7071\times2 + 0.7071\times0 + 0\times3 \\\\ 0\times2 + 0\times0 + 1\times3 \end{bmatrix} = \begin{bmatrix} 1.414 \\\\ 1.414 \\\\ 3 \end{bmatrix}$$
 >
 > 原本在 X 轴上的点
 > $$(2,0,3)$$
@@ -524,7 +523,7 @@ $$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\si
 
 #### 齐次变换矩阵 T ∈ SE(3)
 
-$$T = \begin{bmatrix} R & t \\ 0 & 1 \end{bmatrix} \in \mathbb{R}^{4\times4}$$
+$$T = \begin{bmatrix} R & t \\\\ 0 & 1 \end{bmatrix} \in \mathbb{R}^{4\times4}$$
 
 6个自由度（3旋转 + 3平移）。
 
@@ -545,14 +544,14 @@ $$[x, y, z, 1]^\top$$
 > )，再平移
 > $$[1, 2, 0]^\top$$:
 >
-> $$R = R_z(90^\circ) = \begin{bmatrix} 0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}, \quad t = \begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}$$
+> $$R = R_z(90^\circ) = \begin{bmatrix} 0 & -1 & 0 \\\\ 1 & 0 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}, \quad t = \begin{bmatrix} 1 \\\\ 2 \\\\ 0 \end{bmatrix}$$
 >
-> $$T = \begin{bmatrix} 0 & -1 & 0 & 1 \\ 1 & 0 & 0 & 2 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+> $$T = \begin{bmatrix} 0 & -1 & 0 & 1 \\\\ 1 & 0 & 0 & 2 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
 >
 > 点
 > $$P_{world} = [3, 0, 5]^\top$$
 > 变换到相机坐标:
-> $$P_{cam} = T \begin{bmatrix} 3 \\ 0 \\ 5 \\ 1 \end{bmatrix} = \begin{bmatrix} 0\times3 + (-1)\times0 + 0\times5 + 1\times1 \\ 1\times3 + 0\times0 + 0\times5 + 1\times2 \\ 0\times3 + 0\times0 + 1\times5 + 0\times1 \\ 0+0+0+1 \end{bmatrix} = \begin{bmatrix} 1 \\ 5 \\ 5 \\ 1 \end{bmatrix}$$
+> $$P_{cam} = T \begin{bmatrix} 3 \\\\ 0 \\\\ 5 \\\\ 1 \end{bmatrix} = \begin{bmatrix} 0\times3 + (-1)\times0 + 0\times5 + 1\times1 \\\\ 1\times3 + 0\times0 + 0\times5 + 1\times2 \\\\ 0\times3 + 0\times0 + 1\times5 + 0\times1 \\\\ 0+0+0+1 \end{bmatrix} = \begin{bmatrix} 1 \\\\ 5 \\\\ 5 \\\\ 1 \end{bmatrix}$$
 >
 > 即
 > $$P_{cam} = [1, 5, 5]^\top$$
@@ -578,9 +577,9 @@ $$P_{cam} = T_{cw} \cdot P_{world} = T_{wc}^{-1} \cdot P_{world}$$
 > $$[0,1,0]$$
 > ）
 >
-> $$T_{ab} = \begin{bmatrix} 0 & -1 & 0 & 1 \\ 1 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}, \quad T_{bc} = \begin{bmatrix} 0 & -1 & 0 & 0 \\ 1 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+> $$T_{ab} = \begin{bmatrix} 0 & -1 & 0 & 1 \\\\ 1 & 0 & 0 & 0 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}, \quad T_{bc} = \begin{bmatrix} 0 & -1 & 0 & 0 \\\\ 1 & 0 & 0 & 1 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
 >
-> $$T_{ac} = T_{ab} \cdot T_{bc} = \begin{bmatrix} -1 & 0 & 0 & 1 \\ 0 & -1 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+> $$T_{ac} = T_{ab} \cdot T_{bc} = \begin{bmatrix} -1 & 0 & 0 & 1 \\\\ 0 & -1 & 0 & 1 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
 >
 > 复合变换: 绕Z旋转
 > $$180^\circ$$
@@ -601,7 +600,7 @@ $$P_{cam} = T_{cw} \cdot P_{world} = T_{wc}^{-1} \cdot P_{world}$$
 >
 > 绕 Z 轴旋转 60°：
 >
-> $$R_z(60^\circ) = \begin{bmatrix} 0.5 & -0.866 & 0 \\ 0.866 & 0.5 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R_z(60^\circ) = \begin{bmatrix} 0.5 & -0.866 & 0 \\\\ 0.866 & 0.5 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 >
 > **欧拉角** (ZYX)：
 >
@@ -707,7 +706,7 @@ SLAM 中：相机位姿的协方差矩阵描述了你的**不确定性椭球**�
 > 二维位姿
 > $$(x, y)$$
 > 的协方差矩阵:
-> $$\Sigma = \begin{bmatrix} 0.04 & 0.01 \\ 0.01 & 0.09 \end{bmatrix}$$
+> $$\Sigma = \begin{bmatrix} 0.04 & 0.01 \\\\ 0.01 & 0.09 \end{bmatrix}$$
 >
 > 解读：
 > - $$\sigma_x^2 = 0.04 \Rightarrow \sigma_x = 0.2\text{m}$$
@@ -720,7 +719,7 @@ SLAM 中：相机位姿的协方差矩阵描述了你的**不确定性椭球**�
 > 求
 > $$\Sigma$$
 > 的特征值和特征向量:
-> $$\det\begin{bmatrix} 0.04-\lambda & 0.01 \\ 0.01 & 0.09-\lambda \end{bmatrix} = (0.04-\lambda)(0.09-\lambda) - 0.0001 = 0$$
+> $$\det\begin{bmatrix} 0.04-\lambda & 0.01 \\\\ 0.01 & 0.09-\lambda \end{bmatrix} = (0.04-\lambda)(0.09-\lambda) - 0.0001 = 0$$
 > $$\lambda^2 - 0.13\lambda + 0.0035 = 0 \Rightarrow \lambda_1 \approx 0.093,\ \lambda_2 \approx 0.037$$
 >
 > 不确定性椭圆的半轴长:
@@ -978,12 +977,12 @@ SLAM 中的关键应用：
 > $$u = f_x\frac{X}{Z} + c_x, \quad v = f_y\frac{Y}{Z} + c_y$$
 >
 > 雅可比矩阵（对 3D 点求偏导）:
-> $$J = \begin{bmatrix} \frac{\partial u}{\partial X} & \frac{\partial u}{\partial Y} & \frac{\partial u}{\partial Z} \\ \frac{\partial v}{\partial X} & \frac{\partial v}{\partial Y} & \frac{\partial v}{\partial Z} \end{bmatrix} = \begin{bmatrix} \frac{f_x}{Z} & 0 & -\frac{f_x X}{Z^2} \\ 0 & \frac{f_y}{Z} & -\frac{f_y Y}{Z^2} \end{bmatrix}$$
+> $$J = \begin{bmatrix} \frac{\partial u}{\partial X} & \frac{\partial u}{\partial Y} & \frac{\partial u}{\partial Z} \\\\ \frac{\partial v}{\partial X} & \frac{\partial v}{\partial Y} & \frac{\partial v}{\partial Z} \end{bmatrix} = \begin{bmatrix} \frac{f_x}{Z} & 0 & -\frac{f_x X}{Z^2} \\\\ 0 & \frac{f_y}{Z} & -\frac{f_y Y}{Z^2} \end{bmatrix}$$
 >
 > 当
 > $$f_x=f_y=500$$,
 > $$[X,Y,Z]=[1, 0.5, 5]^\top$$:
-> $$J = \begin{bmatrix} \frac{500}{5} & 0 & -\frac{500\times1}{25} \\ 0 & \frac{500}{5} & -\frac{500\times0.5}{25} \end{bmatrix} = \begin{bmatrix} 100 & 0 & -20 \\ 0 & 100 & -10 \end{bmatrix}$$
+> $$J = \begin{bmatrix} \frac{500}{5} & 0 & -\frac{500\times1}{25} \\\\ 0 & \frac{500}{5} & -\frac{500\times0.5}{25} \end{bmatrix} = \begin{bmatrix} 100 & 0 & -20 \\\\ 0 & 100 & -10 \end{bmatrix}$$
 >
 > J 告诉我们: 改变 X（3D）对 u（像素）的影响是 100 像素/米，改变 Z 对 u 的影响是 -20 像素/米。
 > 离相机越远（Z 大），J 越小 → 远处点对位姿优化的贡献小。
@@ -1022,13 +1021,13 @@ SLAM 中：
 > 旋转向量
 > $$\phi = [0, 0, \frac{\pi}{4}]^\top$$
 > （绕Z轴旋转45°）
-> $$\phi^\wedge = \begin{bmatrix} 0 & -\frac{\pi}{4} & 0 \\ \frac{\pi}{4} & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}$$
+> $$\phi^\wedge = \begin{bmatrix} 0 & -\frac{\pi}{4} & 0 \\\\ \frac{\pi}{4} & 0 & 0 \\\\ 0 & 0 & 0 \end{bmatrix}$$
 >
 > 指数映射（Rodrigues 公式）:
 > $$R = \exp(\phi^\wedge) = I + \frac{\sin\|\phi\|}{\|\phi\|}\phi^\wedge + \frac{1-\cos\|\phi\|}{\|\phi\|^2}(\phi^\wedge)^2$$
 >
 > $$\|\phi\| = \frac{\pi}{4}, \quad \sin\frac{\pi}{4} = 0.7071, \quad 1-\cos\frac{\pi}{4} = 0.2929$$
-> $$R = I + \frac{0.7071}{\pi/4}\phi^\wedge + \cdots = R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\ 0.7071 & 0.7071 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+> $$R = I + \frac{0.7071}{\pi/4}\phi^\wedge + \cdots = R_z(45^\circ) = \begin{bmatrix} 0.7071 & -0.7071 & 0 \\\\ 0.7071 & 0.7071 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 >
 > $$\exp$$
 > 将 3 维 se(3) 映射到 4×4 SE(3) 矩阵 — 这是优化位姿的核心操作。

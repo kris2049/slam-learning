@@ -203,7 +203,7 @@ $$\sigma=1.0$$
 $$G(x,y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2+y^2}{2\sigma^2}}$$
 
 离散近似：
-$$\frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 \end{bmatrix}$$
+$$\frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\\\ 2 & 4 & 2 \\\\ 1 & 2 & 1 \end{bmatrix}$$
 
 > **示例 6** — 手算高斯核和卷积
 >
@@ -218,14 +218,14 @@ $$\frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 \end{bmatrix}$
 > 归一化（除以和
 > $$0.0585\times4 + 0.0965\times4 + 0.159 = 0.234+0.386+0.159=0.779$$
 > ）:
-> $$\text{kernel} \approx \frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 \end{bmatrix}$$
+> $$\text{kernel} \approx \frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\\\ 2 & 4 & 2 \\\\ 1 & 2 & 1 \end{bmatrix}$$
 >
 > ---
 >
 > **示例 6b** — 卷积运算
 >
 > 5×5 图像:
-> $$I = \begin{bmatrix} 10 & 20 & 30 & 20 & 10 \\ 20 & 40 & 50 & 40 & 20 \\ 30 & 50 & 80 & 50 & 30 \\ 20 & 40 & 50 & 40 & 20 \\ 10 & 20 & 30 & 20 & 10 \end{bmatrix}$$
+> $$I = \begin{bmatrix} 10 & 20 & 30 & 20 & 10 \\\\ 20 & 40 & 50 & 40 & 20 \\\\ 30 & 50 & 80 & 50 & 30 \\\\ 20 & 40 & 50 & 40 & 20 \\\\ 10 & 20 & 30 & 20 & 10 \end{bmatrix}$$
 >
 > 对中心像素 (第3行第3列，值=80) 做卷积:
 > $$I[2,2]_{\text{new}} = \frac{1}{16}\sum_{i=-1}^{1}\sum_{j=-1}^{1} w_{ij} \cdot I[2+i, 2+j]$$
@@ -254,7 +254,7 @@ Level 3: 再降采样 (80×60)
 ### 4.2.3 阈值化 (Thresholding)
 
 将灰度图转为二值图：
-$$B(x,y) = \begin{cases} 1 & I(x,y) > T \\ 0 & \text{otherwise} \end{cases}$$
+$$B(x,y) = \begin{cases} 1 & I(x,y) > T \\\\ 0 & \text{otherwise} \end{cases}$$
 
 > **示例 7** — 阈值化
 >
@@ -262,9 +262,9 @@ $$B(x,y) = \begin{cases} 1 & I(x,y) > T \\ 0 & \text{otherwise} \end{cases}$$
 > $$T=128$$
 > ):
 >
-> $$I = \begin{bmatrix} 50 & 200 & 150 & 80 & 255 \\ 30 & 180 & 90 & 120 & 100 \\ 200 & 250 & 130 & 60 & 40 \\ 100 & 90 & 70 & 180 & 200 \\ 0 & 255 & 160 & 140 & 110 \end{bmatrix}$$
+> $$I = \begin{bmatrix} 50 & 200 & 150 & 80 & 255 \\\\ 30 & 180 & 90 & 120 & 100 \\\\ 200 & 250 & 130 & 60 & 40 \\\\ 100 & 90 & 70 & 180 & 200 \\\\ 0 & 255 & 160 & 140 & 110 \end{bmatrix}$$
 >
-> $$B = \begin{bmatrix} 0 & 1 & 1 & 0 & 1 \\ 0 & 1 & 0 & 0 & 0 \\ 1 & 1 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 & 1 \\ 0 & 1 & 1 & 1 & 0 \end{bmatrix}$$
+> $$B = \begin{bmatrix} 0 & 1 & 1 & 0 & 1 \\\\ 0 & 1 & 0 & 0 & 0 \\\\ 1 & 1 & 1 & 0 & 0 \\\\ 0 & 0 & 0 & 1 & 1 \\\\ 0 & 1 & 1 & 1 & 0 \end{bmatrix}$$
 >
 > 这产生了一个二值掩码，可用于：
 > - 场景分割（检测地面/墙壁）
@@ -284,7 +284,7 @@ $$B(x,y) = \begin{cases} 1 & I(x,y) > T \\ 0 & \text{otherwise} \end{cases}$$
 
 **Sobel 算子**（一阶导数近似）：
 
-$$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix} \quad G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix}$$
+$$G_x = \begin{bmatrix} -1 & 0 & 1 \\\\ -2 & 0 & 2 \\\\ -1 & 0 & 1 \end{bmatrix} \quad G_y = \begin{bmatrix} -1 & -2 & -1 \\\\ 0 & 0 & 0 \\\\ 1 & 2 & 1 \end{bmatrix}$$
 
 梯度幅值:
 $$M = \sqrt{G_x^2 + G_y^2}$$
@@ -294,7 +294,7 @@ $$\theta = \arctan(G_y / G_x)$$
 > **示例 8** — Sobel 梯度计算（手算）
 >
 > 5×5 图像（边缘在中间）:
-> $$I = \begin{bmatrix} 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \\ 10 & 10 & 10 & 200 & 200 \end{bmatrix}$$
+> $$I = \begin{bmatrix} 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \\\\ 10 & 10 & 10 & 200 & 200 \end{bmatrix}$$
 >
 > 对中心像素 (第3行第3列，值=10) 计算
 > $$G_x$$:
@@ -361,7 +361,7 @@ $$(-1)\times10 + (-2)\times10 + (-1)\times10 + 0 + 0 + 0 + 1\times200 + 2\times2
 1. 计算图像梯度
 1. $$I_x, I_y$$
 2. 构造结构张量（Structure Tensor）：
-   $$M = \sum_{window} w(x,y) \begin{bmatrix} I_x^2 & I_x I_y \\ I_x I_y & I_y^2 \end{bmatrix}$$
+   $$M = \sum_{window} w(x,y) \begin{bmatrix} I_x^2 & I_x I_y \\\\ I_x I_y & I_y^2 \end{bmatrix}$$
 3. 计算 Harris 响应：
    $$R = \det(M) - k \cdot \text{trace}(M)^2$$
    其中
@@ -379,7 +379,7 @@ $$(-1)\times10 + (-2)\times10 + (-1)\times10 + 0 + 0 + 0 + 1\times200 + 2\times2
 > **示例 10** — Harris 角点手算（3×3窗口）
 >
 > 3×3 窗口的梯度:
-> $$I_x = \begin{bmatrix} 5 & 8 & 5 \\ 6 & 10 & 6 \\ 5 & 8 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 5 & 6 & 5 \\ 8 & 10 & 8 \\ 5 & 6 & 5 \end{bmatrix}$$
+> $$I_x = \begin{bmatrix} 5 & 8 & 5 \\\\ 6 & 10 & 6 \\\\ 5 & 8 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 5 & 6 & 5 \\\\ 8 & 10 & 8 \\\\ 5 & 6 & 5 \end{bmatrix}$$
 >
 > （这是一个角点！X和Y方向都有大梯度）
 >
@@ -390,7 +390,7 @@ $$(-1)\times10 + (-2)\times10 + (-1)\times10 + 0 + 0 + 0 + 1\times200 + 2\times2
 > $$= 25+48+25+48+100+48+25+48+25 = 392$$
 >
 > **Step 2**: 构造 M
-> $$M = \begin{bmatrix} 400 & 392 \\ 392 & 400 \end{bmatrix}$$
+> $$M = \begin{bmatrix} 400 & 392 \\\\ 392 & 400 \end{bmatrix}$$
 >
 > **Step 3**: 计算 Harris 响应
 > $$\det(M) = 400\times400 - 392\times392 = 160000 - 153664 = 6336$$
@@ -408,13 +408,13 @@ $$(-1)\times10 + (-2)\times10 + (-1)\times10 + 0 + 0 + 0 + 1\times200 + 2\times2
 >
 > **示例 10b** — 真正的角点
 >
-> $$I_x = \begin{bmatrix} 5 & 0 & 5 \\ 0 & 10 & 0 \\ 5 & 0 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 0 & 5 & 0 \\ 5 & 10 & 5 \\ 0 & 5 & 0 \end{bmatrix}$$
+> $$I_x = \begin{bmatrix} 5 & 0 & 5 \\\\ 0 & 10 & 0 \\\\ 5 & 0 & 5 \end{bmatrix}, \quad I_y = \begin{bmatrix} 0 & 5 & 0 \\\\ 5 & 10 & 5 \\\\ 0 & 5 & 0 \end{bmatrix}$$
 >
 > $$\sum I_x^2 = 25+0+25+0+100+0+25+0+25 = 200$$
 > $$\sum I_y^2 = 0+25+0+25+100+25+0+25+0 = 200$$
 > $$\sum I_x I_y = 0+0+0+0+0+0+0+0+0 = 0$$
 >
-> $$M = \begin{bmatrix} 200 & 0 \\ 0 & 200 \end{bmatrix}$$
+> $$M = \begin{bmatrix} 200 & 0 \\\\ 0 & 200 \end{bmatrix}$$
 > $$\det(M) = 40000, \quad \text{trace}(M) = 400$$
 > $$R = 40000 - 0.04\times160000 = 40000 - 6400 = 33600$$
 >
