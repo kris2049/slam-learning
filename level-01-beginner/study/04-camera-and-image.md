@@ -118,7 +118,7 @@ SLAM 中**为什么通常只用灰度图？**
 
 用于**去噪**和**构建图像金字塔**。
 
-**高斯核**（3×3 示例，$\sigma=1.0$）：
+**高斯核**（3×3 示例, $\sigma=1.0$）：
 $$G(x,y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2+y^2}{2\sigma^2}}$$
 
 离散近似：
@@ -160,8 +160,8 @@ $$B(x,y) = \begin{cases} 1 & I(x,y) > T \\ 0 & \text{otherwise} \end{cases}$$
 
 $$G_x = \begin{bmatrix} -1 & 0 & 1 \\\\ -2 & 0 & 2 \\\\ -1 & 0 & 1 \end{bmatrix} \quad G_y = \begin{bmatrix} -1 & -2 & -1 \\\\ 0 & 0 & 0 \\\\ 1 & 2 & 1 \end{bmatrix}$$
 
-梯度幅值：$M = \sqrt{G_x^2 + G_y^2}$
-梯度方向：$\theta = \arctan(G_y / G_x)$
+梯度幅值: $M = \sqrt{G_x^2 + G_y^2}$
+梯度方向: $\theta = \arctan(G_y / G_x)$
 
 **Canny 边缘检测**（多阶段）：
 
