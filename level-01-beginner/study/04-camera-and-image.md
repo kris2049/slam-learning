@@ -122,7 +122,7 @@ SLAM 中**为什么通常只用灰度图？**
 $$G(x,y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2+y^2}{2\sigma^2}}$$
 
 离散近似：
-$$\frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 \end{bmatrix}$$
+$$\frac{1}{16}\begin{bmatrix} 1 & 2 & 1 \\\\ 2 & 4 & 2 \\\\ 1 & 2 & 1 \end{bmatrix}$$
 
 **图像金字塔**（最核心的 SLAM 预处理）：
 
@@ -158,7 +158,7 @@ $$B(x,y) = \begin{cases} 1 & I(x,y) > T \\ 0 & \text{otherwise} \end{cases}$$
 
 **Sobel 算子**（一阶导数近似）：
 
-$$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix} \quad G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix}$$
+$$G_x = \begin{bmatrix} -1 & 0 & 1 \\\\ -2 & 0 & 2 \\\\ -1 & 0 & 1 \end{bmatrix} \quad G_y = \begin{bmatrix} -1 & -2 & -1 \\\\ 0 & 0 & 0 \\\\ 1 & 2 & 1 \end{bmatrix}$$
 
 梯度幅值：$M = \sqrt{G_x^2 + G_y^2}$
 梯度方向：$\theta = \arctan(G_y / G_x)$
@@ -185,7 +185,7 @@ $$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix} \qu
 
 1. 计算图像梯度 $I_x, I_y$
 2. 构造结构张量（Structure Tensor）：
-   $$M = \sum_{window} w(x,y) \begin{bmatrix} I_x^2 & I_x I_y \\ I_x I_y & I_y^2 \end{bmatrix}$$
+   $$M = \sum_{window} w(x,y) \begin{bmatrix} I_x^2 & I_x I_y \\\\ I_x I_y & I_y^2 \end{bmatrix}$$
 3. 计算 Harris 响应：
    $$R = \det(M) - k \cdot \text{trace}(M)^2$$
    其中 $k \approx 0.04$（经验值）
