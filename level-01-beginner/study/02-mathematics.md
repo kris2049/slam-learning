@@ -460,7 +460,7 @@ $$A v = \lambda v$$
    > $$\det=0.99$$,
    > $$\text{trace}=2$$
    > $$$$
-   > $$R = 0.99 - 0.04 \times 4 = 0.83 \quad\text{（很小 → 平坦）}$$
+   > $$R = 0.99 - 0.04 \times 4 = 0.83 \quad\text{(small → flat)}$$
    > $$$$
 
    Harris 响应:
@@ -759,22 +759,22 @@ $$P(A \mid B) = \frac{P(B \mid A) \cdot P(A)}{P(B)}$$
 > - $$P(\text{loop}) = 0.1$$
 > - （只有10%的概率经过之前的地方）
 > - 如果真的是回环，特征匹配成功的概率
-> - $$P(\text{很多匹配} \mid \text{loop}) = 0.95$$
+> - $$P(\text{many matches} \mid \text{loop}) = 0.95$$
 > - 如果不是回环，特征匹配成功的概率
-> - $$P(\text{很多匹配} \mid \text{no loop}) = 0.05$$
+> - $$P(\text{many matches} \mid \text{no loop}) = 0.05$$
 > - （偶尔也会误匹配很多）
 >
 > 现在观察到了很多匹配。回环的后验概率是多少？
 >
 > **Step 1**: 计算全概率
 > $$$$
-> $$P(\text{很多匹配}) = P(\text{很多匹配}\mid\text{loop})P(\text{loop}) + P(\text{很多匹配}\mid\text{no loop})P(\text{no loop})$$
+> $$P(\text{many matches}) = P(\text{many matches}\mid\text{loop})P(\text{loop}) + P(\text{many matches}\mid\text{no loop})P(\text{no loop})$$
 > $$$$
 > $$= 0.95 \times 0.1 + 0.05 \times 0.9 = 0.095 + 0.045 = 0.14$$
 >
 > **Step 2**: 贝叶斯更新
 >
-> $$P(\text{loop} \mid \text{很多匹配}) = \frac{0.95 \times 0.1}{0.14} = \frac{0.095}{0.14} \approx 0.679$$
+> $$P(\text{loop} \mid \text{many matches}) = \frac{0.95 \times 0.1}{0.14} = \frac{0.095}{0.14} \approx 0.679$$
 >
 > 观察到很多匹配后，回环概率从 10% 更新到了 **68%**！但仍有 32% 可能不是回环。
 >
@@ -913,10 +913,10 @@ SLAM 中的关键应用：
 > $$u(X) \approx u(1.0) + u'(1.0)(X - 1.0)$$
 > $$u(1.0) = 100\times1.0 + 320 = 420$$
 > $$$$
-> $$u'(X) = 100 \quad\text{（常数，因这是线性函数）}$$
+> $$u'(X) = 100 \quad\text{(constant, linear function)}$$
 > $$$$
 > $$$$
-> $$u(X) \approx 420 + 100(X - 1.0) = 100X + 320 \quad\text{（精确，因为原函数是线性的）}$$
+> $$u(X) \approx 420 + 100(X - 1.0) = 100X + 320 \quad\text{(exact, linear function)}$$
 > $$$$
 >
 > ---
